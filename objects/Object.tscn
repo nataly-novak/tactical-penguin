@@ -1,0 +1,47 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://objects/Object.gd" type="Script" id=1]
+[ext_resource path="res://graphics/player/Penguin.png" type="Texture" id=2]
+[ext_resource path="res://graphics/player/light.png" type="Texture" id=3]
+[ext_resource path="res://graphics/player/light2.png" type="Texture" id=4]
+[ext_resource path="res://objects/Fighter.gd" type="Script" id=5]
+[ext_resource path="res://objects/Inventory.gd" type="Script" id=6]
+
+[node name="Object" type="Node2D"]
+z_index = 1
+script = ExtResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 2 )
+offset = Vector2( 32, 32 )
+
+[node name="Camera2D" type="Camera2D" parent="."]
+offset = Vector2( 32, 32 )
+limit_left = -32
+limit_top = -32
+limit_right = 10000
+limit_bottom = 10000
+
+[node name="Light2D" type="Light2D" parent="."]
+modulate = Color( 0, 0, 0, 1 )
+self_modulate = Color( 0.647059, 0.647059, 0.647059, 1 )
+show_behind_parent = true
+texture = ExtResource( 4 )
+offset = Vector2( 32, 32 )
+mode = 2
+shadow_color = Color( 0, 0, 0, 1 )
+shadow_gradient_length = 2.0
+shadow_filter = 1
+shadow_filter_smooth = 5.0
+
+[node name="Light2D2" type="Light2D" parent="."]
+texture = ExtResource( 3 )
+mode = 2
+shadow_enabled = true
+shadow_color = Color( 0.0705882, 0.0705882, 0.0705882, 0.572549 )
+
+[node name="Fighter" type="Node" parent="."]
+script = ExtResource( 5 )
+
+[node name="Inventory" type="Node" parent="."]
+script = ExtResource( 6 )

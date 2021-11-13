@@ -1,0 +1,102 @@
+extends Node
+var rng = RandomNumberGenerator.new()
+onready var AC = 10
+onready var BAB = 5
+onready var dnumber = 1
+onready var ddice = 6
+onready var dbonus = 3
+onready var hp = 30
+onready var crit_mult =2
+onready var crit_chance = 20
+onready var character = get_parent()
+
+# Declare member variables here. Examples:
+# var a = 2
+# var b = "text"
+func get_attack(number, dice, attack, bonus, mult, chance):
+	var roll = rolled(1,20)
+	if roll+bonus>= self.AC:
+		if roll>=chance:
+			var confirm = rolled(1,20)+bonus
+			if confirm > self.AC:
+				return get_damage(rolled(mult*number,dice)+mult*bonus)
+			else:
+				return get_damage(rolled(number, dice)+bonus)
+		else:
+			return get_damage(rolled(number, dice)+bonus)
+	else:
+		if roll == 20:
+			return get_damage(rolled(number, dice)+bonus)
+		else:
+			return get_damage(0)
+		
+	
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	print("ready")
+	match character.o_type:
+		
+		"hero":
+			set_params(40,12,5,1,6,3,2,19)
+		"whale":
+			set_params(20,13,2,2,4,1,2,20)
+			print("AC ", self.AC)
+			 # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+#func _process(delta):
+#	pass
+func rolled(number, dice):
+	var res = 0
+	for i in number:
+		res+=rng.randi_range(1,dice)
+		print(res)
+	return res
+	
+	
+func get_damage (damage):
+	print(damage)
+	print(character.o_type," health ",self.hp)
+	self.hp = self.hp-damage
+	print(character.o_type," damage ",self.hp)	
+	if self.hp<0:
+		self.hp = 0 
+		return 0
+	else:
+		return 1
+		
+func set_params(health, armor, atbonus,dicenumb, dicecube,  dambonus,critm, critc ):
+	self.hp = health
+	self.AC = armor
+	self.dnumber = dicenumb
+	self.ddice = dicenumb
+	self.BAB=atbonus
+	self.dbonus = dambonus
+	self.crit_mult = critm
+	self.crit_chance = critc
+		
+func get_AC():
+	return self.AC
+	
+func get_BAB():
+	return self.BAB
+	
+func get_dnumber():	
+	return self.dnumber
+	
+func get_ddice():
+	return self.ddice
+	
+func get_dbonus():
+	return self.dbonus
+	
+func get_hp():
+	return self.hp
+	
+func get_chance():
+	return self.crit_chance
+	
+func get_mult():
+	return self.crit_mult		

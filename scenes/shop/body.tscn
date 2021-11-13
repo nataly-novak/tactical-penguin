@@ -1,0 +1,50 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://graphics/UI/Board.png" type="Texture" id=1]
+[ext_resource path="res://Fonts/Canterbury.tres" type="DynamicFont" id=2]
+[ext_resource path="res://graphics/blueprints/chair.png" type="Texture" id=3]
+[ext_resource path="res://graphics/items/plackl.png" type="Texture" id=4]
+[ext_resource path="res://graphics/items/Stick.png" type="Texture" id=5]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+centered = false
+
+[node name="Sprite1" type="Sprite" parent="Sprite"]
+position = Vector2( -98, 11 )
+texture = ExtResource( 5 )
+offset = Vector2( 156, 49 )
+
+[node name="Sprite2" type="Sprite" parent="Sprite"]
+position = Vector2( 21, 12 )
+texture = ExtResource( 4 )
+offset = Vector2( 156, 49 )
+
+[node name="print" type="Sprite" parent="Sprite"]
+position = Vector2( 439, 62 )
+scale = Vector2( 0.75, 0.75 )
+texture = ExtResource( 3 )
+
+[node name="Label" type="Label" parent="."]
+margin_left = 102.0
+margin_top = 36.0
+margin_right = 142.0
+margin_bottom = 91.0
+custom_fonts/font = ExtResource( 2 )
+text = "4"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label2" type="Label" parent="."]
+margin_left = 213.0
+margin_top = 35.0
+margin_right = 253.0
+margin_bottom = 90.0
+custom_fonts/font = ExtResource( 2 )
+text = "2"
+__meta__ = {
+"_edit_use_anchors_": false
+}
