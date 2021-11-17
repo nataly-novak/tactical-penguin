@@ -8,8 +8,8 @@ var max_num = 8
 var min_num = 2
 var mp = [-1]
 var hall_width = 1
-
-var max_room = 16
+var max_room_start = 16
+var max_room = max_room_start
 var room_lim = 5
 
 # Declare member variables here. Examples:
@@ -29,9 +29,20 @@ func _ready():
 			
 func set_map(a,b):
 	var res=fill_map(a,b)
+	map.map_array.append(res)
 	for i in len(res)-1:
 		for j in len(res[0])-1:
 			map.set_cell(j,i,res[i][j])
+	res = []
+	max_room = max_room_start
+	print("NEW")
+			
+func get_map(l:int):
+	var res = map.map_array[l]
+	for i in len(res)-1:
+		for j in len(res[0])-1:
+			map.set_cell(j,i,res[i][j])	
+	print("BACK")
 			
 func fill_map(x, y):
 	var chunks = [Rect2(0,0,x,y)]

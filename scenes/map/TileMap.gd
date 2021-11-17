@@ -10,6 +10,7 @@ var map = self
 onready var main = get_parent()
 onready var generator = get_node("generator")
 onready var pathfinder = get_node("pathfinder")
+export var map_array =["ground"]
 export var ids = [-1] 
 export var ents = ["dummy"]
 export var iids = [-2] 
@@ -21,6 +22,7 @@ var hp = 100000
 signal hp_change(hp)
 var i_types = ["stick", "plack"]
 var hero
+var survivers = ["empty"]
 
 
 signal show_inventory
@@ -32,19 +34,23 @@ signal show_shop
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	set_scene(a,b, total_enemies, 1)
 
-
-	generator.set_map(a,b)
+func set_scene(a: int, b:int, m:int, l: int):
+	get_level(a,b,l)
 
 	map.pathfinder.get_a_cells()	
 
 	self.connect("hp_change",self.get_parent(),"_on_hp_change")
 	used_cells = map.get_used_cells_by_id(0)
 	hero_position = new_spawn()
-	hero = spawn("hero", hero_position)
+	if not hero:
+		hero = spawn("hero", hero_position)
+	else:
+		hero.set_map_pos(hero_position)
 	hp = ents[0].fighter.hp
 	
-	for i in range(0,total_enemies):
+	for i in range(0,m):
 		spawn("whale", new_spawn())
 		monsters += 1
 
@@ -53,6 +59,11 @@ func _ready():
 	map.pathfinder.get_a_cells()
 	print(monsters)	
 
+func get_level(a,b,l:int):
+	if l>=len(map_array) or len(map_array)==1:
+		generator.set_map(a,b)
+	else:
+		generator.get_map(l)
 
 	
 func spawn(flavor: String, location: Vector2):
@@ -200,6 +211,8 @@ func _input(event):
 			var PICK = event.scancode == KEY_P
 			var INV = event.scancode == KEY_I
 			var SHP = event.scancode == KEY_S
+			var NEW = event.scancode == KEY_N
+			var BCK = event.scancode == KEY_B
 			
 			if UP:
 				hero.step(Vector2(0,-1))
@@ -216,6 +229,10 @@ func _input(event):
 				toggle_inventory()
 			if SHP:	
 				toggle_shop()
+			if NEW:
+				set_scene(a,b, total_enemies, len(map_array))
+			if BCK:
+				set_scene(a,b, total_enemies, max(1,len(map_array)-1))
 			for i in map.ents:
 				i.dothemove()
 
@@ -224,3 +241,17 @@ func toggle_inventory():
 	
 func toggle_shop():
 	self.emit_signal("show_shop", hero.inventory.items)
+
+func new_floor(a,b,m,l):
+	var mon_surv = []
+	for i in ents:
+		if i.o_type == "foe":
+			var pos = i.get_map_pos()
+			var hp = i.fighter.get_hp()
+			var state = [hp, pos]
+			mon_surv.append(state)
+	if not survivers[l]:		
+		survivers.append(mon_surv)
+	else:
+		survivers[l]=[]+mon_surv
+		
