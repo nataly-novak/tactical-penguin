@@ -87,7 +87,7 @@ func get_directions(start:Vector2, end:Vector2):
 func dothemove():
 	match o_type:
 		"whale":
-			map.pathfinder.get_a_cells()
+			#map.pathfinder.get_a_cells()
 			var paths = pathfinder.get_a_path(aStar, self.get_map_pos(), map.hero_position)
 
 			if paths != [] and len(paths)>2 and len(paths)<7:

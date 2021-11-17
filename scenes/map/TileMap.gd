@@ -49,7 +49,7 @@ func _ready():
 	var paths = pathfinder.get_a_path(map.pathfinder.aStar,Vector2(1,1), hero_position)
 	self.connect("show_inventory", main, "_on_inventory_show")
 	self.connect("show_shop", main, "_on_shop_show")
-		
+	map.pathfinder.get_a_cells()	
 				
 	
 func spawn(flavor: String, location: Vector2):
