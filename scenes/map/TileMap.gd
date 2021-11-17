@@ -16,7 +16,7 @@ export var iids = [-2]
 export var itms = ["zero"]
 export var used_cells = []
 var monsters = 0
-var total_enemies = 20
+var total_enemies = 10
 var hp = 100000
 signal hp_change(hp)
 var i_types = ["stick", "plack"]
@@ -33,10 +33,11 @@ signal show_shop
 # Called when the node enters the scene tree for the first time.
 func _ready():
 
+
 	generator.set_map(a,b)
-	pathfinder.get_a_cells()
-	print(pathfinder.aStar.get_point_count())
-	print(pathfinder.aStar.get_point_connections(pathfinder.getAStarCellId(Vector2(1,1))))
+
+	map.pathfinder.get_a_cells()	
+
 	self.connect("hp_change",self.get_parent(),"_on_hp_change")
 	used_cells = map.get_used_cells_by_id(0)
 	hero_position = new_spawn()
@@ -46,11 +47,13 @@ func _ready():
 	for i in range(0,total_enemies):
 		spawn("whale", new_spawn())
 		monsters += 1
-	var paths = pathfinder.get_a_path(map.pathfinder.aStar,Vector2(1,1), hero_position)
+
 	self.connect("show_inventory", main, "_on_inventory_show")
 	self.connect("show_shop", main, "_on_shop_show")
-	map.pathfinder.get_a_cells()	
-				
+	map.pathfinder.get_a_cells()
+	print(monsters)	
+
+
 	
 func spawn(flavor: String, location: Vector2):
 	var number

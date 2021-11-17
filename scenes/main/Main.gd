@@ -16,6 +16,7 @@ var shp
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+
 	hud.update_hp(map.hp) # Replace with function body.
 
 

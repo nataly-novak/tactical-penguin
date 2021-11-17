@@ -71,8 +71,8 @@ func step(dir):
 		new_cell = old_cell
 	if o_type == "hero":
 		map.hero_position = new_cell
-		print(map.hero_position)
-		print(map.pathfinder.get_a_path(aStar,Vector2(1,1), map.hero_position))	
+
+
 	
 	
 	return check
