@@ -56,15 +56,15 @@ func freed(pos:Vector2):
 	if aStar.has_point(idx):
 		aStar.set_point_disabled(idx, false)
 		
-func get_a_path(aStar, start:Vector2, target:Vector2):
+func get_a_path(aaStar, start:Vector2, target:Vector2):
 
 	var idStart = getAStarCellId(start)
 
 	var idTarget = getAStarCellId(target)
 	
-	if aStar.has_point(idStart) and aStar.has_point(idTarget):
+	if aaStar.has_point(idStart) and aaStar.has_point(idTarget):
 
 
-		return Array(aStar.get_point_path(idStart, idTarget))
+		return Array(aaStar.get_point_path(idStart, idTarget))
 	else:	
 		return []

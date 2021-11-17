@@ -73,7 +73,7 @@ func spawn(flavor: String, location: Vector2):
 	if flavor != "hero":
 		obj.o_friendly = "foe"
 	used_cells.erase(location)
-	obj.connect("hit", self, "_on_hit")
+
 	return obj
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
