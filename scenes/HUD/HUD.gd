@@ -1,8 +1,12 @@
 extends CanvasLayer
 onready var hp_label = self.get_node("hp_label")
+onready var lvl_label =self.get_node("Level")
 
 func update_hp(hp):
 	hp_label.text = str(hp)
+	
+func update_lvl(lvl):
+	lvl_label.text = str(lvl) 	
 
 # Declare member variables here. Examples:
 # var a = 2

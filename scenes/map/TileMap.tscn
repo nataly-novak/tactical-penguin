@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://tilesets/tileset.tres" type="TileSet" id=1]
 [ext_resource path="res://scenes/map/generator.gd" type="Script" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://objects/Object.tscn" type="PackedScene" id=4]
 [ext_resource path="res://scenes/map/pathfinder.gd" type="Script" id=5]
 [ext_resource path="res://objects/items/item.tscn" type="PackedScene" id=6]
+[ext_resource path="res://objects/dungeon/stairs.tscn" type="PackedScene" id=7]
 
 [node name="TileMap" type="TileMap"]
 position = Vector2( 64, 128 )
@@ -17,6 +18,7 @@ format = 1
 script = ExtResource( 3 )
 Obj = ExtResource( 4 )
 Itm = ExtResource( 6 )
+Str = ExtResource( 7 )
 
 [node name="generator" type="Node" parent="."]
 script = ExtResource( 2 )

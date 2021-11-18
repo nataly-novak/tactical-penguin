@@ -30,7 +30,8 @@ func _ready():
 
 	
 func get_total():
-	
+	for  i in len(result):
+		result[i]=0
 	
 	for i in items:
 		result[i]+=1

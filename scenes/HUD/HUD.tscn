@@ -35,3 +35,27 @@ text = "40
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Label2" type="Label" parent="."]
+margin_left = 558.673
+margin_top = 34.3367
+margin_right = 684.673
+margin_bottom = 89.3367
+custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "Level"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Level" type="Label" parent="."]
+margin_left = 708.673
+margin_top = 34.3367
+margin_right = 801.673
+margin_bottom = 147.337
+custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "1"
+__meta__ = {
+"_edit_use_anchors_": false
+}

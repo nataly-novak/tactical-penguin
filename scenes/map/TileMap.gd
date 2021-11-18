@@ -4,6 +4,7 @@ export var a =30
 export var b = 30
 export (PackedScene) var Obj
 export (PackedScene) var Itm
+export (PackedScene) var Str
 
 var hero_position = Vector2(1,1)
 var map = self
@@ -20,13 +21,18 @@ var monsters = 0
 var total_enemies = 10
 var hp = 100000
 signal hp_change(hp)
+signal lvl_change(lv)
+signal show_help
 var i_types = ["stick", "plack"]
 var hero
 var survivers = ["empty"]
 var hero_positions = ["start"]
+var stairs_position = ["noescape"]
+var stairs_array = ["defaultstair"]
 var current_floor = 0
 signal show_inventory
 signal show_shop
+var help_on = true
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -36,13 +42,18 @@ signal show_shop
 func _ready():
 	set_scene(a,b, total_enemies, 1)
 	current_floor = 1
+	self.connect("show_inventory", main, "_on_inventory_show")
+	self.connect("show_shop", main, "_on_shop_show")
+	self.connect("show_help", main, "_on_help_show")
+	self.connect("hp_change",self.get_parent(),"_on_hp_change")
+	self.connect("lvl_change",self.get_parent(),"_on_level_change")
 
 func set_scene(a: int, b:int, m:int, l: int):
 	get_level(a,b,l)
 
 	map.pathfinder.get_a_cells()	
 
-	self.connect("hp_change",self.get_parent(),"_on_hp_change")
+
 	used_cells = map.get_used_cells_by_id(0)
 	print(l)
 	if l >=len(hero_positions) or len(hero_positions)==1:
@@ -56,6 +67,7 @@ func set_scene(a: int, b:int, m:int, l: int):
 		hero = spawn("hero", hero_position)
 	else:
 		hero.set_map_pos(hero_position)
+		used_cells.erase(hero_position)
 	hp = hero.fighter.hp
 	
 	if l >=len(survivers):
@@ -68,9 +80,16 @@ func set_scene(a: int, b:int, m:int, l: int):
 			spawn("whale", i[1])
 			ents[-2].set_hp(i[0])
 			
+	if l>=len(stairs_position):
+		if l ==1:
+			add_stairs(stair_pos())
+		else:
+			add_stairs(one_stair_pos(hero.get_map_pos()))
+	else:
+		print(stairs_position[l])
+		add_existing_stairs(stairs_position[l]) 
 
-	self.connect("show_inventory", main, "_on_inventory_show")
-	self.connect("show_shop", main, "_on_shop_show")
+	
 	map.pathfinder.get_a_cells()
 	
 
@@ -106,6 +125,59 @@ func spawn(flavor: String, location: Vector2):
 #	pass
 func get_hero():
 	return hero
+
+func stair_pos():
+	var ids = range(0, len(used_cells))
+	var id1 = generator.rng.randi_range(0, len(ids)-1)
+	var loc1 = used_cells[id1]
+	ids.remove(id1)
+	var id2 = generator.rng.randi_range(0, len(ids)-1)
+	var loc2 = used_cells[id2]
+	print([loc1, loc2])
+	return [loc1,loc2]
+	
+func one_stair_pos(loc1:Vector2 ):
+	var ids = range(0, len(used_cells))
+	var id1 = used_cells.find(loc1)
+	ids.remove(id1)
+	var id2 = generator.rng.randi_range(0, len(ids)-1)
+	var loc2 = used_cells[id2]
+	print([loc1, loc2])
+	return [loc2,loc1]
+
+func add_stairs (positions) :
+	var loc1 = positions[0]
+	var loc2 = positions[1]
+	var strs1 = Str.instance() 
+	strs1.set_dir(0)
+	stairs_array.append(strs1)
+	add_child(strs1)
+	strs1.set_map_pos(loc1)
+
+	var strs2 = Str.instance() 
+	strs2.set_dir(1)
+	stairs_array.append(strs2)
+	add_child(strs2)
+	strs2.set_map_pos(loc2)
+
+
+	
+func add_existing_stairs(state):
+	var loc1 = state[0][1]
+	var loc2 = state[1][1]
+	var dir1 = state[0][0]
+	var dir2 = state[1][0]
+	var strs1 = Str.instance() 
+	strs1.set_dir(dir1)
+	stairs_array.append(strs1)
+	add_child(strs1)
+	strs1.set_map_pos(loc1)
+	var strs2 = Str.instance() 
+	strs2.set_dir(dir2)
+	stairs_array.append(strs2)
+	add_child(strs2)
+	strs2.set_map_pos(loc2)	
+
 
 func drop_item(flavor: String, location: Vector2):
 	var num
@@ -148,12 +220,13 @@ func find_ent(loc:Vector2):
 			return i
 			
 func find_itm(loc:Vector2):
-	for i in len(itms):
-		if itms[i].get_map_pos() == loc:
-			return i
-		else: 
-			return -1
-
+	if itms:
+		for i in len(itms):
+			if (itms[i] is String) == false:
+				if itms[i].get_map_pos() == loc:
+					return i
+	return -1
+	
 func _on_hit(attacker,damager):
 
 	var ati = find_ent(attacker)
@@ -200,7 +273,15 @@ func _on_hit(attacker,damager):
 			var modul = get_node("CanvasModulate")
 			modul.set_color(Color(1, 0, 0, 1) )
 			
-			
+func check_stairs(direction:int, loc: Vector2):
+	print(stairs_array)
+	var res = false
+	for i in range(len(stairs_array)):
+		if (stairs_array[i] is  String) == false:
+			print([stairs_array[i].get_dir(),stairs_array[i].get_map_pos(), direction])
+			if stairs_array[i].get_map_pos() == loc and direction == stairs_array[i].get_dir():
+				res = true
+	return res		
 
 func pick(loc:Vector2):
 	var it = find_itm(loc)
@@ -219,10 +300,10 @@ func pick(loc:Vector2):
 func _input(event):
 
 		if event is InputEventKey and event.pressed:
-			var UP = event.scancode == KEY_K
-			var DOWN = event.scancode == KEY_J
-			var LEFT = event.scancode == KEY_H
-			var RIGHT = event.scancode == KEY_L
+			var UP = (event.scancode == KEY_K or event.scancode ==KEY_UP)
+			var DOWN = (event.scancode == KEY_J or event.scancode == KEY_DOWN)
+			var LEFT = (event.scancode == KEY_H or event.scancode == KEY_LEFT)
+			var RIGHT = (event.scancode == KEY_L or event.scancode == KEY_RIGHT)
 			var PICK = event.scancode == KEY_P
 			var INV = event.scancode == KEY_I
 			var SHP = event.scancode == KEY_S
@@ -244,12 +325,17 @@ func _input(event):
 				toggle_inventory()
 			if SHP:	
 				toggle_shop()
-			if NEW:
+			if NEW and check_stairs(0,hero.get_map_pos()):
 				new_floor(a,b, total_enemies,current_floor, current_floor+1)
-			if BCK:
+			if BCK and check_stairs(1,hero.get_map_pos()):
 				new_floor(a,b, total_enemies,current_floor, max(1,current_floor-1))
 			for i in map.ents:
 				i.dothemove()
+		if event is InputEventMouseButton:
+			if event.button_index == BUTTON_LEFT and event.pressed: 
+				if help_on ==true:
+					emit_signal("show_help")
+					help_on = false
 
 func toggle_inventory():
 	self.emit_signal("show_inventory", hero.inventory.items)
@@ -258,6 +344,7 @@ func toggle_shop():
 	self.emit_signal("show_shop", hero.inventory.items)
 
 func new_floor(a,b,m,l1,l2):
+	print("NEW FLOOR")
 	var mon_surv = []
 	for i in ents:
 		if i.o_friendly == "foe":
@@ -283,9 +370,25 @@ func new_floor(a,b,m,l1,l2):
 			j.queue_free()
 			ids.pop_back()
 			ents.pop_back()
+	var strs_fl = []
+	
+	for i in range(1,3): 
+		var pos = stairs_array[i].get_map_pos()
+		var dir = stairs_array[i].get_dir()
+		var state = [dir,pos]
+		strs_fl.append(state) 
+	if len(stairs_position)<=l1:
+		stairs_position.append(strs_fl)
+	else:
+		stairs_position[l1]=[]+strs_fl
+	while len(stairs_array)>1:
+		var j = stairs_array[-1]
+		j.queue_free()
+		stairs_array.pop_back()
 	print(hero_positions)
 	hp = hero.fighter.hp		 
 	set_scene(a,b,m,l2)		
 	current_floor = l2
 	hero.fighter.hp = hp
 	print(hero.fighter.hp)
+	emit_signal("lvl_change",current_floor)
