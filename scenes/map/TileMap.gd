@@ -23,8 +23,8 @@ signal hp_change(hp)
 var i_types = ["stick", "plack"]
 var hero
 var survivers = ["empty"]
-
-
+var hero_positions = ["start"]
+var current_floor = 0
 signal show_inventory
 signal show_shop
 # Declare member variables here. Examples:
@@ -35,6 +35,7 @@ signal show_shop
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	set_scene(a,b, total_enemies, 1)
+	current_floor = 1
 
 func set_scene(a: int, b:int, m:int, l: int):
 	get_level(a,b,l)
@@ -43,21 +44,35 @@ func set_scene(a: int, b:int, m:int, l: int):
 
 	self.connect("hp_change",self.get_parent(),"_on_hp_change")
 	used_cells = map.get_used_cells_by_id(0)
-	hero_position = new_spawn()
+	print(l)
+	if l >=len(hero_positions) or len(hero_positions)==1:
+		hero_position = new_spawn()
+		print("new")
+	else:
+		print("old")
+		hero_position = hero_positions[l]
 	if not hero:
+		print("NO HERO")
 		hero = spawn("hero", hero_position)
 	else:
 		hero.set_map_pos(hero_position)
-	hp = ents[0].fighter.hp
+	hp = hero.fighter.hp
 	
-	for i in range(0,m):
-		spawn("whale", new_spawn())
-		monsters += 1
+	if l >=len(survivers):
+		for i in range(0,m):
+			spawn("whale", new_spawn())
+			monsters += 1
+	else:
+		
+		for i in survivers[l]:
+			spawn("whale", i[1])
+			ents[-2].set_hp(i[0])
+			
 
 	self.connect("show_inventory", main, "_on_inventory_show")
 	self.connect("show_shop", main, "_on_shop_show")
 	map.pathfinder.get_a_cells()
-	print(monsters)	
+	
 
 func get_level(a,b,l:int):
 	if l>=len(map_array) or len(map_array)==1:
@@ -140,7 +155,7 @@ func find_itm(loc:Vector2):
 			return -1
 
 func _on_hit(attacker,damager):
-	print("hit")
+
 	var ati = find_ent(attacker)
 	var dami = find_ent(damager)
 
@@ -153,7 +168,7 @@ func _on_hit(attacker,damager):
 		var health = dam.fighter.hp
 		emit_signal("hp_change",health)
 	if res == 0:
-		print(dam.o_type)
+		
 		if dam.o_type != "hero":
 			
 			var pos = dam.get_map_pos()
@@ -162,26 +177,26 @@ func _on_hit(attacker,damager):
 			#print("inventory:", drop,pos)
 			dam.queue_free()
 			ids.remove(dami)
-			print(ents)
+			
 			ents.remove(dami)
-			print(ents)
+			
 			used_cells.erase(pos)
 			monsters-=1
-			print(len(ids))
+			
 			if dam.inventory.items != []:
 				var drop =  i_types[dam.inventory.items[0]]
 				drop_item(drop, pos)
 			if monsters==0:
 				print("win")
-				ents[0].get_node("Light2D").enabled = false
-				ents[0].get_node("Light2D2").enabled = false
+				hero.get_node("Light2D").enabled = false
+				hero.get_node("Light2D2").enabled = false
 				var modul = get_node("CanvasModulate")
 				modul.set_color(Color(1, 1, 1, 1) )
 				
 		else:
 			print("lose")
-			ents[0].get_node("Light2D").enabled = false
-			ents[0].get_node("Light2D2").enabled = false
+			hero.get_node("Light2D").enabled = false
+			hero.get_node("Light2D2").enabled = false
 			var modul = get_node("CanvasModulate")
 			modul.set_color(Color(1, 0, 0, 1) )
 			
@@ -199,7 +214,7 @@ func pick(loc:Vector2):
 		if iids == []:
 			iids = [-2]
 		hero.inventory.add_item(flav_id)
-		print(hero.inventory.items)
+		
 
 func _input(event):
 
@@ -230,9 +245,9 @@ func _input(event):
 			if SHP:	
 				toggle_shop()
 			if NEW:
-				set_scene(a,b, total_enemies, len(map_array))
+				new_floor(a,b, total_enemies,current_floor, current_floor+1)
 			if BCK:
-				set_scene(a,b, total_enemies, max(1,len(map_array)-1))
+				new_floor(a,b, total_enemies,current_floor, max(1,current_floor-1))
 			for i in map.ents:
 				i.dothemove()
 
@@ -242,16 +257,35 @@ func toggle_inventory():
 func toggle_shop():
 	self.emit_signal("show_shop", hero.inventory.items)
 
-func new_floor(a,b,m,l):
+func new_floor(a,b,m,l1,l2):
 	var mon_surv = []
 	for i in ents:
-		if i.o_type == "foe":
+		if i.o_friendly == "foe":
 			var pos = i.get_map_pos()
 			var hp = i.fighter.get_hp()
 			var state = [hp, pos]
+			print(state)
 			mon_surv.append(state)
-	if not survivers[l]:		
+	if len(survivers)<=l1:		
 		survivers.append(mon_surv)
+		print("NEW ")
 	else:
-		survivers[l]=[]+mon_surv
-		
+		survivers[l1]=[]+mon_surv
+		print("OLD ")
+	if len(hero_positions)<=l1:
+		hero_positions.append(hero.get_map_pos())
+		print("NEW ",hero_positions)
+	else:
+		hero_positions[l1]=hero.get_map_pos()
+		print("OLD ", hero_positions)
+	while len(ents)>1:
+			var j = ents[-1]
+			j.queue_free()
+			ids.pop_back()
+			ents.pop_back()
+	print(hero_positions)
+	hp = hero.fighter.hp		 
+	set_scene(a,b,m,l2)		
+	current_floor = l2
+	hero.fighter.hp = hp
+	print(hero.fighter.hp)

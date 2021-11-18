@@ -43,7 +43,7 @@ func _ready():
 		get_node("Light2D2").enabled = false
 		fighter.set_params(20,13,2,2,4,1,2,20)
 		inventory.generate_items()
-		print("AC ", fighter.AC)	
+			
 	set_process_input(true)
 	getimage()
 	self.connect("hit",self.get_parent(), "_on_hit")
@@ -54,7 +54,7 @@ func step(dir):
 	var old_cell = get_map_pos()
 	var new_cell = get_map_pos() + dir
 	var check = map.is_blocked(new_cell)
-	print(check)
+	
 	if  check== "empty" :
 		set_map_pos(new_cell)
 		map.pathfinder.occupy(new_cell)
@@ -64,7 +64,7 @@ func step(dir):
 		new_cell = old_cell
 		if o_type == "hero":
 			self.emit_signal("hit",old_cell,enemy_cell)
-			print( "foe")
+			
 		
 	else:
 		print("You bravely walk into the wall.")
@@ -93,9 +93,10 @@ func dothemove():
 			if paths != [] and len(paths)>2 and len(paths)<7:
 				var step_dir = get_directions(self.get_map_pos(), paths[1])
 				step(step_dir)
-				print("Move")
+				
 			elif len(paths) == 2:
 				self.emit_signal("hit",paths[0],paths[1])
-				print("FOOD")
+				
 		
-
+func set_hp(hp:int):
+	fighter.hp = hp

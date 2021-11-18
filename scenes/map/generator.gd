@@ -35,20 +35,20 @@ func set_map(a,b):
 			map.set_cell(j,i,res[i][j])
 	res = []
 	max_room = max_room_start
-	print("NEW")
+
 			
 func get_map(l:int):
 	var res = map.map_array[l]
 	for i in len(res)-1:
 		for j in len(res[0])-1:
 			map.set_cell(j,i,res[i][j])	
-	print("BACK")
+
 			
 func fill_map(x, y):
 	var chunks = [Rect2(0,0,x,y)]
 	while max_room>room_lim:
 		split_chunk(chunks,x,y)
-	print("Max Room ", max_room)	
+
 	var doors = get_doors(chunks,x,y)
 	var re = []
 	for i in range (y+1):
@@ -83,7 +83,7 @@ func split_chunk(chunks,x,y):
 	if big_chunks != []:
 		var big_id = rng.randi_range(0,len(big_chunks)-1)
 		var id = chunks.find(big_chunks[big_id])
-		print("id ",id)
+
 		var old_chunk = chunks[id]
 		
 		chunks.remove(id)
@@ -98,13 +98,13 @@ func split_chunk(chunks,x,y):
 			direction = 1
 		else:
 			direction = -1	
-		print(direction)			
+
 			
 		if direction == 0:
 
 
 			var location = rng.randi_range(max(5,old_chunk.position.x+min_size+1), min(old_chunk.position.x+old_chunk.size.x-min_size-3, x-5 ))
-			print(location)
+
 
 			chunks.append(Rect2(old_chunk.position.x, old_chunk.position.y,location-old_chunk.position.x, old_chunk.size.y))
 			chunks.append(Rect2(location+hall_width, old_chunk.position.y, old_chunk.size.x+old_chunk.position.x-location-hall_width, old_chunk.size.y))
@@ -112,7 +112,7 @@ func split_chunk(chunks,x,y):
 		elif direction ==1:
 			var location = rng.randi_range(max(5,old_chunk.position.y+min_size+2), min(old_chunk.position.y+old_chunk.size.y-min_size-3, y-5))
 
-			print(location)
+
 			chunks.append(Rect2(old_chunk.position.x, old_chunk.position.y, old_chunk.size.x,location-old_chunk.position.y))
 			chunks.append(Rect2(old_chunk.position.x,location+hall_width, old_chunk.size.x, old_chunk.size.y+old_chunk.position.y-location-hall_width))
 

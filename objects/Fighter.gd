@@ -34,14 +34,14 @@ func get_attack(number, dice, attack, bonus, mult, chance):
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	print("ready")
+
 	match character.o_type:
 		
 		"hero":
-			set_params(40,12,5,1,6,3,2,19)
+			set_params(300,12,5,1,6,3,2,19)
 		"whale":
 			set_params(20,13,2,2,4,1,2,20)
-			print("AC ", self.AC)
+
 			 # Replace with function body.
 
 
