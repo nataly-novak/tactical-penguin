@@ -5,3 +5,8 @@
 bin/
 build/
 lib/
+
+#hidden
+.gitattributes
+.gitignore
+.mono
