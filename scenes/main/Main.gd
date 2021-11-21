@@ -60,7 +60,7 @@ func _on_shop_show(inventory):
 		print(shp)
 		ui.add_child(shp)
 
-		shp.set_position(Vector2(get_viewport_rect().size.x / 2-224,get_viewport_rect().size.y/2-128)) 
+		shp.set_position(Vector2(get_viewport_rect().size.x / 2-224,get_viewport_rect().size.y/2-512)) 
 		shop_on = true
 	else:
 		shp.queue_free()

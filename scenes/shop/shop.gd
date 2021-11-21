@@ -6,14 +6,18 @@ onready var main = ui.get_parent()
 onready var head = get_node("Head")
 onready var l1 = get_node("Head/Label1")
 onready var l2 = get_node("Head/Label2")
-onready var body = get_node("Body")
-onready var tail = get_node("Tail")
+
+
 onready var map = main.map
 onready var hero = map.hero
 onready var inventory = hero.inventory
 var chair_set =[4,2]
 var lst
-
+export (PackedScene) var Body
+export (PackedScene) var Tail
+var blueprints = ["chair","table","curtain","bed", "bedside", "soft"]
+var entries = ["head"]
+var tail
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -24,7 +28,20 @@ func _ready():
 	lst = inventory.get_total()
 	l1.text = str(lst[0])
 	l2.text = str(lst[1])
-
+	var h = 0
+	for i in len(blueprints):
+		if entries == ["head"]:
+			entries.clear()
+		var body = Body.instance()
+		entries.append(body)
+		add_child(body)
+		h = h+128
+		body.set_position(Vector2(0,h))
+		body.set_item(blueprints[i])
+	tail = Tail.instance()
+	h=h+128
+	add_child(tail)
+	tail.set_position(Vector2(0,h))
 
 func _input(event):
 

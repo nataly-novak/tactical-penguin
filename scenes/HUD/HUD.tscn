@@ -16,8 +16,8 @@ margin_left = 200.0
 margin_top = 40.0
 margin_right = 293.0
 margin_bottom = 95.0
-custom_fonts/font = ExtResource( 2 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 2 )
 text = "HP"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -28,8 +28,8 @@ margin_left = 350.0
 margin_top = 40.0
 margin_right = 443.0
 margin_bottom = 95.0
-custom_fonts/font = ExtResource( 2 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 2 )
 text = "40
 "
 __meta__ = {
@@ -38,23 +38,23 @@ __meta__ = {
 
 [node name="Label2" type="Label" parent="."]
 margin_left = 558.673
-margin_top = 34.3367
-margin_right = 684.673
-margin_bottom = 89.3367
-custom_fonts/font = ExtResource( 2 )
+margin_top = 40.0
+margin_right = 711.673
+margin_bottom = 121.0
 custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 2 )
 text = "Level"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Level" type="Label" parent="."]
-margin_left = 708.673
-margin_top = 34.3367
-margin_right = 801.673
-margin_bottom = 147.337
-custom_fonts/font = ExtResource( 2 )
+margin_left = 734.158
+margin_top = 40.337
+margin_right = 827.158
+margin_bottom = 153.337
 custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 2 )
 text = "1"
 __meta__ = {
 "_edit_use_anchors_": false
