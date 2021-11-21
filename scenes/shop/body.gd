@@ -1,19 +1,18 @@
 extends Node2D
 var body = self
-var chairtex = preload("res://graphics/blueprints/chair.png")
-var tabletex = preload("res://graphics/blueprints/Table.png")
-var curtaintex = preload("res://graphics/blueprints/Curtain.png")
-var bedtex = preload("res://graphics/blueprints/bed.png")
-var bedsidetex = preload("res://graphics/blueprints/bedside.png")
-var softtex = preload("res://graphics/blueprints/soft.png")
-var setups = [[6,2,0],[8,4,0],[3,0,2],[10,9,7],[8,6,0],[8,5,2]]
-var textures = [chairtex,tabletex,curtaintex,bedtex,bedsidetex,softtex]
+
+var setups = GlobalVars.setups
+var textures = GlobalVars.btextures
 onready var l1 = self.get_node("Label")
 onready var l2 = self.get_node("Label2")
 onready var l3 = self.get_node("Label3")
 onready var labels = [l1,l2,l3]
 onready var bp = self.get_node("Sprite/print")
-var blueprints = ["chair","table","curtain","bed", "bedside", "soft"]
+var blueprints = GlobalVars.ff_types
+var bodytex = preload("res://graphics/UI/Board.png")
+var seltex = preload("res://graphics/UI/Board_selected.png")
+onready var bg = self.get_node("Sprite")
+var selected = false
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -39,4 +38,14 @@ func set_numbers(values):
 		
 func set_values(i:int):
 		bp.set_texture(textures[i])
-		set_numbers(i) 	 		
+		set_numbers(i)
+		
+func toggle_bg():
+	if selected:
+		selected = false
+		bg.set_texture(bodytex)
+	else:
+		selected = true
+		bg.set_texture(seltex)
+		
+

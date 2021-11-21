@@ -1,10 +1,10 @@
 extends Node2D
 
-var f_types = ["chair"]
+var f_type = GlobalVars.ff_types
 export var fids = [-2] 
 export var fnts = ["zero"]
 export (PackedScene) var Fnt
-var i_types = ["stick", "plack"]
+var i_types = GlobalVars.i_types
 onready var shop = get_parent()
 var furns = -1# Declare member variables here. Examples:
 # var a = 2
@@ -16,6 +16,7 @@ func _ready():
 	pass # Replace with function body.
 
 func drop_item(flavor: String, location: int):
+	print(flavor)
 	var num
 	if fids != [-2]:
 		num = fids.max()+1
@@ -32,7 +33,7 @@ func drop_item(flavor: String, location: int):
 	fnts.append(fnt)
 	add_child(fnt)
 	set_inv_pos(fnt, location)
-
+	fnt.set_type(flavor)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

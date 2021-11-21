@@ -1,10 +1,10 @@
 extends Node2D
 
 onready var objectsprite = get_node("Sprite")
-var placktex = preload("res://graphics/items/plackl.png")
-var sticktex = preload("res://graphics/items/Stick.png")
+
+var itemtex = GlobalVars.itemtex
 export var i_type = "stick" 
-export var i_types = ["stick", "plack"]
+var i_types = GlobalVars.i_types
 export var o_type = "item"
 onready var map = get_parent()
 export (PackedScene) var Itm
@@ -21,15 +21,14 @@ func get_map_pos():
 	return map.world_to_map(get_position())
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	match i_type:
-		"stick":
-			objectsprite.set_texture(sticktex)
-		"plack":
-			objectsprite.set_texture(placktex)
-
+	get_texture(i_type)
+	
 func dothemove():
 	pass
 	
+func get_texture(flavor):
+	var i = i_types.find(flavor)
+	objectsprite.set_texture(itemtex[i])
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

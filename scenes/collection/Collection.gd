@@ -9,7 +9,7 @@ onready var inventory = hero.inventory
 export var iids = [-2] 
 export var itms = ["zero"]
 export (PackedScene) var Itm
-var i_types = ["stick", "plack"]
+var i_types = GlobalVars.i_types
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"

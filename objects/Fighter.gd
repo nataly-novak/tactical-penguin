@@ -1,5 +1,5 @@
 extends Node
-var rng = RandomNumberGenerator.new()
+
 onready var AC = 10
 onready var BAB = 5
 onready var dnumber = 1
@@ -9,24 +9,25 @@ onready var hp = 30
 onready var crit_mult =2
 onready var crit_chance = 20
 onready var character = get_parent()
+onready var max_hp = 300
 
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
 func get_attack(number, dice, attack, bonus, mult, chance):
-	var roll = rolled(1,20)
+	var roll = GlobalVars.rolled(1,20)
 	if roll+bonus>= self.AC:
 		if roll>=chance:
-			var confirm = rolled(1,20)+bonus
+			var confirm = GlobalVars.rolled(1,20)+bonus
 			if confirm > self.AC:
-				return get_damage(rolled(mult*number,dice)+mult*bonus)
+				return get_damage(GlobalVars.rolled(mult*number,dice)+mult*bonus)
 			else:
-				return get_damage(rolled(number, dice)+bonus)
+				return get_damage(GlobalVars.rolled(number, dice)+bonus)
 		else:
-			return get_damage(rolled(number, dice)+bonus)
+			return get_damage(GlobalVars.rolled(number, dice)+bonus)
 	else:
 		if roll == 20:
-			return get_damage(rolled(number, dice)+bonus)
+			return get_damage(GlobalVars.rolled(number, dice)+bonus)
 		else:
 			return get_damage(0)
 		
@@ -38,9 +39,9 @@ func _ready():
 	match character.o_type:
 		
 		"hero":
-			set_params(300,12,5,1,6,3,2,19)
+			set_params(GlobalVars.hero_params)
 		"whale":
-			set_params(20,13,2,2,4,1,2,20)
+			set_params(GlobalVars.whale_params)
 
 			 # Replace with function body.
 
@@ -48,12 +49,7 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
-func rolled(number, dice):
-	var res = 0
-	for i in number:
-		res+=rng.randi_range(1,dice)
-		print(res)
-	return res
+
 	
 	
 func get_damage (damage):
@@ -67,15 +63,16 @@ func get_damage (damage):
 	else:
 		return 1
 		
-func set_params(health, armor, atbonus,dicenumb, dicecube,  dambonus,critm, critc ):
-	self.hp = health
-	self.AC = armor
-	self.dnumber = dicenumb
-	self.ddice = dicenumb
-	self.BAB=atbonus
-	self.dbonus = dambonus
-	self.crit_mult = critm
-	self.crit_chance = critc
+func set_params(params):
+	self.hp = params[0]
+	self.AC = params[1]
+	self.dnumber = params[2]
+	self.ddice = params[3]
+	self.BAB=params[4]
+	self.dbonus = params[5]
+	self.crit_mult = params[6]
+	self.crit_chance = params[7]
+	self.max_hp = params[0]
 		
 func get_AC():
 	return self.AC
@@ -100,3 +97,6 @@ func get_chance():
 	
 func get_mult():
 	return self.crit_mult		
+
+func heal(heal_value):
+	self.hp = min(self.hp+heal_value, self.max_hp)

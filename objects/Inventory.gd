@@ -3,9 +3,10 @@ var rng = RandomNumberGenerator.new()
 
 
 var items = []
-var item_types = 2
+
 var max_items = 1
-var result = [0,0] 
+var result = [0,0,0] 
+var item_types = len(result)
 
 func add_item(obj: int):
 	items.append(obj)
@@ -20,7 +21,9 @@ func find_item(obj: int):
 	
 func generate_items():
 	rng.randomize()
-	var numb = rng.randi_range(0,max_items)
+	var arr =[0,1,1]
+	var id = rng.randi_range(0,2)
+	var numb = arr[id]
 	for i in range(numb):
 		var new_item = rng.randi_range(0, item_types-1)
 		add_item(new_item)
@@ -35,6 +38,7 @@ func get_total():
 	
 	for i in items:
 		result[i]+=1
+	print(result)
 	return result	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

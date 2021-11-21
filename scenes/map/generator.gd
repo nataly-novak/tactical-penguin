@@ -1,17 +1,19 @@
 extends Node
-var rng = RandomNumberGenerator.new()
+var rng = GlobalVars.rng
 onready var map = get_parent()
 
-var max_size = 12
-var min_size = 2
-var max_num = 8
-var min_num = 2
-var mp = [-1]
-var hall_width = 1
-var max_room_start = 16
-var max_room = max_room_start
-var room_lim = 5
+var max_size = GlobalVars.max_size
+var min_size = GlobalVars.min_size
+var max_num = GlobalVars.max_num
+var min_num = GlobalVars.min_num
 
+var hall_width = GlobalVars.hall_width
+var max_room_start = GlobalVars.max_room_start
+
+var room_lim = 5
+var mp = [-1]
+
+var max_room = max_room_start
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"

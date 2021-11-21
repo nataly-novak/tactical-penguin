@@ -18,6 +18,10 @@ config/name="Game"
 run/main_scene="res://scenes/main/Main.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+GlobalVars="*res://Global/Global_vars.gd"
+
 [gdnative]
 
 singletons=[  ]

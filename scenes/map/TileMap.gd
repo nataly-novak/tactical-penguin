@@ -1,7 +1,7 @@
 extends TileMap
 
-export var a =30
-export var b = 30
+var a = GlobalVars.a
+var b = GlobalVars.b
 export (PackedScene) var Obj
 export (PackedScene) var Itm
 export (PackedScene) var Str
@@ -18,12 +18,15 @@ export var iids = [-2]
 export var itms = ["zero"]
 export var used_cells = []
 var monsters = 0
-var total_enemies = 10
+var max_enemies = GlobalVars.max_enemies
+var rng = GlobalVars.rng
+var total_enemies = rng.randi_range(max_enemies/2, max_enemies-1)
 var hp = 100000
 signal hp_change(hp)
 signal lvl_change(lv)
+signal turn_change
 signal show_help
-var i_types = ["stick", "plack"]
+var i_types = GlobalVars.i_types
 var hero
 var survivers = ["empty"]
 var hero_positions = ["start"]
@@ -33,6 +36,7 @@ var current_floor = 0
 signal show_inventory
 signal show_shop
 var help_on = true
+var regen_rate = 10
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -47,6 +51,8 @@ func _ready():
 	self.connect("show_help", main, "_on_help_show")
 	self.connect("hp_change",self.get_parent(),"_on_hp_change")
 	self.connect("lvl_change",self.get_parent(),"_on_level_change")
+	self.connect("turn_change",self.get_parent(),"_on_turn_change")
+
 
 func set_scene(a: int, b:int, m:int, l: int):
 	get_level(a,b,l)
@@ -257,6 +263,7 @@ func _on_hit(attacker,damager):
 			monsters-=1
 			
 			if dam.inventory.items != []:
+				
 				var drop =  i_types[dam.inventory.items[0]]
 				drop_item(drop, pos)
 			if monsters==0:
@@ -298,39 +305,49 @@ func pick(loc:Vector2):
 		
 
 func _input(event):
+		if main.shop_on == false:
+			if event is InputEventKey and event.pressed:
+				var UP = (event.scancode == KEY_K or event.scancode ==KEY_UP)
+				var DOWN = (event.scancode == KEY_J or event.scancode == KEY_DOWN)
+				var LEFT = (event.scancode == KEY_H or event.scancode == KEY_LEFT)
+				var RIGHT = (event.scancode == KEY_L or event.scancode == KEY_RIGHT)
+				var PICK = event.scancode == KEY_P
+				var INV = event.scancode == KEY_I
 
+				var NEW = event.scancode == KEY_N
+				var BCK = event.scancode == KEY_B
+				
+				if UP:
+					hero.step(Vector2(0,-1))
+					print("UP")
+				if DOWN:
+					hero.step(Vector2(0,1))
+				if LEFT:
+					hero.step(Vector2(-1,0))
+				if RIGHT:
+					hero.step(Vector2(1,0))
+				if PICK:
+					map.pick(hero.get_map_pos())
+				if INV:	
+					toggle_inventory()
+				
+				if NEW and check_stairs(0,hero.get_map_pos()):
+					new_floor(a,b, total_enemies,current_floor, current_floor+1)
+				if BCK and check_stairs(1,hero.get_map_pos()):
+					new_floor(a,b, total_enemies,current_floor, max(1,current_floor-1))
+				for i in map.ents:
+					i.dothemove()
+
+				print(main.turn_counter)
+				emit_signal("turn_change")
+				if main.turn_counter%regen_rate == 0:
+					hero.fighter.heal(1)
+					var health = hero.fighter.hp
+					emit_signal("hp_change",health)
 		if event is InputEventKey and event.pressed:
-			var UP = (event.scancode == KEY_K or event.scancode ==KEY_UP)
-			var DOWN = (event.scancode == KEY_J or event.scancode == KEY_DOWN)
-			var LEFT = (event.scancode == KEY_H or event.scancode == KEY_LEFT)
-			var RIGHT = (event.scancode == KEY_L or event.scancode == KEY_RIGHT)
-			var PICK = event.scancode == KEY_P
-			var INV = event.scancode == KEY_I
 			var SHP = event.scancode == KEY_S
-			var NEW = event.scancode == KEY_N
-			var BCK = event.scancode == KEY_B
-			
-			if UP:
-				hero.step(Vector2(0,-1))
-				print("UP")
-			if DOWN:
-				hero.step(Vector2(0,1))
-			if LEFT:
-				hero.step(Vector2(-1,0))
-			if RIGHT:
-				hero.step(Vector2(1,0))
-			if PICK:
-				map.pick(hero.get_map_pos())
-			if INV:	
-				toggle_inventory()
 			if SHP:	
-				toggle_shop()
-			if NEW and check_stairs(0,hero.get_map_pos()):
-				new_floor(a,b, total_enemies,current_floor, current_floor+1)
-			if BCK and check_stairs(1,hero.get_map_pos()):
-				new_floor(a,b, total_enemies,current_floor, max(1,current_floor-1))
-			for i in map.ents:
-				i.dothemove()
+					toggle_shop()
 		if event is InputEventMouseButton:
 			if event.button_index == BUTTON_LEFT and event.pressed: 
 				if help_on ==true:

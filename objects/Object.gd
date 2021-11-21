@@ -3,8 +3,8 @@ extends Node2D
 export var o_type = "hero"
 export var o_friendly = "friendly"
 export var o_number = -1
-var playertex = preload("res://graphics/player/Penguin.png")
-var whaletex = preload("res://graphics/monster/Whale.png")
+var playertex = GlobalVars.playertex
+var whaletex = GlobalVars.whaletex
 onready var objectsprite = get_node("Sprite")
 onready var camera = get_node("Camera2D")
 onready var fighter = get_node("Fighter")
@@ -37,11 +37,16 @@ func _ready():
 		camera.current = true
 		camera.limit_right = 64*map.a+96
 		camera.limit_bottom = 64*map.b+96
-		fighter.set_params(300,12,5,1,6,3,2,19)
+		fighter.set_params(GlobalVars.hero_params)
+		get_node("Light2D2").enabled = true
+		get_node("Light2D").enabled = true
+
+		print(get_node("Light2D").enabled)
+		print(get_node("Light2D2").enabled)
 	if o_type != "hero":
 		get_node("Light2D").enabled = false
 		get_node("Light2D2").enabled = false
-		fighter.set_params(20,13,2,2,4,1,2,20)
+		fighter.set_params(GlobalVars.whale_params)
 		inventory.generate_items()
 			
 	set_process_input(true)

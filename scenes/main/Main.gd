@@ -13,6 +13,7 @@ var inv
 var shp
 var hlp
 signal show_help
+var turn_counter = 0
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -35,6 +36,12 @@ func _on_hp_change(hp):
 func _on_level_change(lvl):
 	print("SIGNAL ",lvl)
 	hud.update_lvl(lvl)
+	
+func _on_turn_change():
+	print("SIGNAL",turn_counter)
+	turn_counter+=1
+	
+	hud.update_turn(turn_counter)	
 		
 	
 func _on_inventory_show(inventory):
