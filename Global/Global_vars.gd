@@ -5,7 +5,7 @@ var rng = RandomNumberGenerator.new()
 var i_types = ["stick", "plack", "cloth"]
 
 var ff_types = ["chair","table","curtain","bed", "bedside", "soft"]
-var setups = [[6,2,0],[8,4,0],[3,0,2],[10,9,7],[8,6,0],[8,5,2]]
+var setups = [[6,2,0],[8,4,0],[3,0,2],[10,9,7],[0,6,0],[0,5,2]]
 var chairtex = preload("res://graphics/furniture/chair.png")
 var tabletex = preload("res://graphics/furniture/Table.png")
 var curtaintex = preload("res://graphics/furniture/Curtain.png")
@@ -42,11 +42,23 @@ var max_room_start = 16
 var placktex = preload("res://graphics/items/plackl.png")
 var sticktex = preload("res://graphics/items/Stick.png")
 var clothtex = preload("res://graphics/items/cloth.png")
-var itemtex = [placktex, sticktex, clothtex]# Declare member variables here. Examples:
+var itemtex = [sticktex, placktex, clothtex]# Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
+var furniture_collection = ["room"]
+#var furniture_collection = ["chair", "chair","chair"]
 
 
+var ochair = preload("res://objects/Home/chair.tscn")
+var otable = preload("res://objects/Home/table.tscn")
+var ocurtain = preload("res://objects/Home/curtain.tscn")
+var obed = preload("res://objects/Home/bed.tscn")
+var obedside = preload("res://objects/Home/bedside.tscn")
+var osoft = preload("res://objects/Home/soft.tscn")
+var ofurn = [ochair, otable, ocurtain, obed,obedside, osoft ]
+
+var saved_room = ["save"]
+#var saved_room = [["chair", Vector2(300,300)]]
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	rng.randomize() # Replace with function body.
@@ -57,6 +69,9 @@ func rolled(number, dice):
 		res+=rng.randi_range(1,dice)
 		print(res)
 	return res
+	
+	
+	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

@@ -1,0 +1,40 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://graphics/UI/Cell.png" type="Texture" id=1]
+[ext_resource path="res://graphics/furniture/chair.png" type="Texture" id=2]
+[ext_resource path="res://scenes/Room/Cell.gd" type="Script" id=3]
+[ext_resource path="res://Fonts/FjordOne-Regular.otf" type="DynamicFontData" id=4]
+
+[sub_resource type="DynamicFont" id=2]
+size = 24
+font_data = ExtResource( 4 )
+
+[node name="StaticBody2D" type="StaticBody2D"]
+input_pickable = true
+script = ExtResource( 3 )
+
+[node name="BG" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+centered = false
+
+[node name="Image" type="Sprite" parent="."]
+position = Vector2( 93.4388, 96.1085 )
+texture = ExtResource( 2 )
+
+[node name="Amount" type="Label" parent="."]
+margin_left = 155.0
+margin_top = 5.0
+margin_right = 181.0
+margin_bottom = 36.0
+rect_scale = Vector2( 1.2, 1.2 )
+custom_fonts/font = SubResource( 2 )
+text = "0"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PoolVector2Array( 4.78223, 5.81993, 4.78223, 184.688, 184.986, 186.023, 184.986, 7.15477 )
+
+[connection signal="input_event" from="." to="." method="_on_StaticBody2D_input_event"]

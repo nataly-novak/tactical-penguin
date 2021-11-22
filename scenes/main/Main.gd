@@ -86,3 +86,6 @@ func _on_help_show():
 	else:
 		hlp.queue_free()
 		help_on = false	
+
+func _on_checkout():
+	get_tree().change_scene("res://scenes/Room/Room.tscn")
