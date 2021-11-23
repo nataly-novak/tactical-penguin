@@ -14,8 +14,8 @@ _global_script_class_icons={
 
 [application]
 
-config/name="Game"
-run/main_scene="res://scenes/main/Main.tscn"
+config/name="Tactical_Penguin"
+run/main_scene="res://scenes/Starter/Starter.tscn"
 config/icon="res://icon.png"
 
 [autoload]

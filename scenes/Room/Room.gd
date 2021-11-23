@@ -47,10 +47,11 @@ func add_furn(flavor, position:Vector2):
 func save_layout():
 	var furns = ["furns"]
 	furns.clear()
-	for i in fnts:
-		furns.append([i.f_type, i.get_position()])
-	print(furns)
-	GlobalVars.saved_room = []+furns
+	if fnts != ["zerofurnishing"]:
+		for i in fnts:
+			furns.append([i.f_type, i.get_position()])
+		print(furns)
+		GlobalVars.saved_room = []+furns
 	print(GlobalVars.saved_room)
 	print(GlobalVars.furniture_collection) 
 	
@@ -65,6 +66,7 @@ func _input(event):
 		var SAVE = event.scancode == KEY_S
 		var LOAD = event.scancode == KEY_L
 		var REPEAT = event.scancode == KEY_R
+		var QUIT = event.scancode == KEY_Q
 		if SAVE:
 			save_layout()
 		if LOAD:
@@ -72,6 +74,9 @@ func _input(event):
 		if REPEAT:
 			save_layout()
 			get_tree().change_scene("res://scenes/main/Main.tscn")
+		if QUIT:
+			save_layout()
+			get_tree().change_scene("res://scenes/Starter/Starter.tscn")
 	if event is InputEventMouseButton:
 			if event.button_index == BUTTON_LEFT and event.pressed: 
 				if help_on ==true:

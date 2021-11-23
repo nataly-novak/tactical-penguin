@@ -58,9 +58,13 @@ var osoft = preload("res://objects/Home/soft.tscn")
 var ofurn = [ochair, otable, ocurtain, obed,obedside, osoft ]
 
 var saved_room = ["save"]
+
+var platform = OS.get_name()
+
 #var saved_room = [["chair", Vector2(300,300)]]
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	print(platform)
 	rng.randomize() # Replace with function body.
 
 func rolled(number, dice):
@@ -71,7 +75,47 @@ func rolled(number, dice):
 	return res
 	
 	
+func save_to_string():
+	var save_str = ""
+	if saved_room !=  ["save"]:
+		for i in saved_room:
+			var itm = str(ff_types.find(i[0]))
+			var x = str(int(i[1].x))
+			var y = str(int(i[1].y))
+			var ln = itm+","+x+","+y+";" 
+			save_str = save_str+ln
+		
+	return save_str
 	
+func load_from_string(save_str:String):
+	var save = ["save"]
+	if save_str != "":
+		save.clear()
+		var lines = save_str.split(";",false)
+		for ln in lines:
+			var parts = ln.split(",")
+			var itm = ff_types[int(parts[0])]
+			var x = int(parts[1])
+			var y = int(parts[2])
+			var entry = [itm,Vector2(x,y)]
+			save.append(entry)
+	saved_room = []+save
+			
+			
+func save_to_disk():
+	if platform != "HTML5":
+		var save_game = File.new()
+		save_game.open("user://savegame.save", File.WRITE)
+		save_game.store_line(to_json(save_to_string()))
+		save_game.close()
+
+func load_from_disk():
+	var save_game = File.new()
+	if save_game.file_exists("user://savegame.save"):
+		save_game.open("user://savegame.save", File.READ)
+		while save_game.get_position() < save_game.get_len():
+			var line = parse_json(save_game.get_line())
+			load_from_string(line)					
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

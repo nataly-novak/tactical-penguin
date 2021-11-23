@@ -1,0 +1,45 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://graphics/UI/Dialogue_load.png" type="Texture" id=1]
+[ext_resource path="res://Fonts/Font_res.tres" type="DynamicFont" id=2]
+[ext_resource path="res://scenes/Starter/Load.gd" type="Script" id=3]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource( 3 )
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+
+[node name="Disk" type="Button" parent="."]
+margin_left = -208.0
+margin_top = 194.0
+margin_right = -21.0
+margin_bottom = 220.0
+custom_fonts/font = ExtResource( 2 )
+text = "Load from Disk"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="String" type="Button" parent="."]
+margin_left = 16.1529
+margin_top = 194.0
+margin_right = 203.153
+margin_bottom = 220.0
+custom_fonts/font = ExtResource( 2 )
+text = "Load from String"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Text" type="TextEdit" parent="."]
+margin_left = -219.0
+margin_top = -221.0
+margin_right = 217.0
+margin_bottom = 107.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="pressed" from="Disk" to="." method="_on_Disk_pressed"]
+[connection signal="pressed" from="String" to="." method="_on_String_pressed"]
