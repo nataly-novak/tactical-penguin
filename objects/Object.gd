@@ -35,14 +35,13 @@ func getimage():
 func _ready():
 	if o_type == "hero":
 		camera.current = true
-		camera.limit_right = 64*map.a+96
+		camera.limit_right = 64*map.a+14*64+96
 		camera.limit_bottom = 64*map.b+96
 		fighter.set_params(GlobalVars.hero_params)
 		get_node("Light2D2").enabled = true
+		
 		get_node("Light2D").enabled = true
-
-		print(get_node("Light2D").enabled)
-		print(get_node("Light2D2").enabled)
+		
 	if o_type != "hero":
 		get_node("Light2D").enabled = false
 		get_node("Light2D2").enabled = false
@@ -72,7 +71,7 @@ func step(dir):
 			
 		
 	else:
-		print("You bravely walk into the wall.")
+		map.type("You bravely walk into the wall.")
 		new_cell = old_cell
 	if o_type == "hero":
 		map.hero_position = new_cell

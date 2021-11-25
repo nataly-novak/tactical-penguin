@@ -2,7 +2,7 @@ extends Node
 
 var rng = RandomNumberGenerator.new()
 
-var i_types = ["stick", "plack", "cloth"]
+var i_types = ["stick", "plank", "cloth"]
 
 var ff_types = ["chair","table","curtain","bed", "bedside", "soft"]
 var setups = [[6,2,0],[8,4,0],[3,0,2],[10,9,7],[0,6,0],[0,5,2]]

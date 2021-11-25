@@ -6,12 +6,14 @@ onready var map = self.get_node("TileMap")
 export (PackedScene) var Inv 
 export (PackedScene) var Shp
 export (PackedScene) var Hlp
+export (PackedScene) var Zro
 var inventory_on = false
 var shop_on = false
 var help_on = false
 var inv
 var shp
 var hlp
+var zro
 signal show_help
 var turn_counter = 0
 # Declare member variables here. Examples:
@@ -89,3 +91,12 @@ func _on_help_show():
 
 func _on_checkout():
 	get_tree().change_scene("res://scenes/Room/Room.tscn")
+	
+func _on_zero():
+	_on_shop_show(0)
+	zro = Zro.instance()
+	ui.add_child(zro)
+	zro.set_position(get_viewport_rect().size / 2)  
+	print("zero")
+
+

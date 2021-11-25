@@ -9,6 +9,8 @@ export (PackedScene) var Str
 var hero_position = Vector2(1,1)
 var map = self
 onready var main = get_parent()
+onready var hud = main.get_node("HUD")
+onready var logger = hud.get_node("Log")
 onready var generator = get_node("generator")
 onready var pathfinder = get_node("pathfinder")
 export var map_array =["ground"]
@@ -37,6 +39,8 @@ signal show_inventory
 signal show_shop
 var help_on = true
 var regen_rate = 10
+signal zero
+var acting = true
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -44,6 +48,7 @@ var regen_rate = 10
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	acting = true 
 	set_scene(a,b, total_enemies, 1)
 	current_floor = 1
 	self.connect("show_inventory", main, "_on_inventory_show")
@@ -52,6 +57,8 @@ func _ready():
 	self.connect("hp_change",self.get_parent(),"_on_hp_change")
 	self.connect("lvl_change",self.get_parent(),"_on_level_change")
 	self.connect("turn_change",self.get_parent(),"_on_turn_change")
+	self.connect("zero", main,"_on_zero")
+	logger.text = logger.text+"Welocme to the Infinite Shop.\n"
 
 
 func set_scene(a: int, b:int, m:int, l: int):
@@ -234,22 +241,26 @@ func find_itm(loc:Vector2):
 	return -1
 	
 func _on_hit(attacker,damager):
-
+	
 	var ati = find_ent(attacker)
 	var dami = find_ent(damager)
 
 
 	var at = ents[ati]
 	var dam = ents[dami]
-
+	if dam.o_type == "hero":
+		type("You were attacked by a "+at.o_type)
+	else:
+		type("You attack a "+dam.o_type)
 	var res = dam.fighter.get_attack(at.fighter.dnumber, at.fighter.ddice, at.fighter.BAB, at.fighter.dbonus, at.fighter.crit_mult, at.fighter.crit_chance)
 	if dam.o_type == "hero":
 		var health = dam.fighter.hp
 		emit_signal("hp_change",health)
+		
 	if res == 0:
 		
 		if dam.o_type != "hero":
-			
+			type(dam.o_type+ " disappears!")
 			var pos = dam.get_map_pos()
 			
 			
@@ -279,6 +290,8 @@ func _on_hit(attacker,damager):
 			hero.get_node("Light2D2").enabled = false
 			var modul = get_node("CanvasModulate")
 			modul.set_color(Color(1, 0, 0, 1) )
+
+			emit_signal("zero")
 			
 func check_stairs(direction:int, loc: Vector2):
 	print(stairs_array)
@@ -294,6 +307,7 @@ func pick(loc:Vector2):
 	var it = find_itm(loc)
 	if it >=0:
 		var flav = itms[it].i_type
+		type("you picked a "+flav)
 		var flav_id = i_types.find(flav)
 		var item = itms[it]
 		item.queue_free()
@@ -305,7 +319,7 @@ func pick(loc:Vector2):
 		
 
 func _input(event):
-		if main.shop_on == false:
+		if main.shop_on == false and acting:
 			if event is InputEventKey and event.pressed:
 				var UP = (event.scancode == KEY_K or event.scancode ==KEY_UP)
 				var DOWN = (event.scancode == KEY_J or event.scancode == KEY_DOWN)
@@ -319,13 +333,16 @@ func _input(event):
 				
 				if UP:
 					hero.step(Vector2(0,-1))
-					print("UP")
+					
 				if DOWN:
 					hero.step(Vector2(0,1))
+					
 				if LEFT:
 					hero.step(Vector2(-1,0))
+					
 				if RIGHT:
 					hero.step(Vector2(1,0))
+					
 				if PICK:
 					map.pick(hero.get_map_pos())
 				if INV:	
@@ -333,8 +350,10 @@ func _input(event):
 				
 				if NEW and check_stairs(0,hero.get_map_pos()):
 					new_floor(a,b, total_enemies,current_floor, current_floor+1)
+					type("you go downstairs")
 				if BCK and check_stairs(1,hero.get_map_pos()):
 					new_floor(a,b, total_enemies,current_floor, max(1,current_floor-1))
+					type("you go upstairs")
 				for i in map.ents:
 					i.dothemove()
 
@@ -409,3 +428,6 @@ func new_floor(a,b,m,l1,l2):
 	hero.fighter.hp = hp
 	print(hero.fighter.hp)
 	emit_signal("lvl_change",current_floor)
+
+func type(line:String):
+	logger.text = logger.text+line+"\n"
