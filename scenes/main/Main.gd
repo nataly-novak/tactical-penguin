@@ -2,6 +2,7 @@ extends Node2D
 onready var main = self 
 onready var hud = self.get_node("HUD")
 onready var ui = self.get_node("UI")
+onready var controls = ui.get_node("controls")
 onready var map = self.get_node("TileMap")
 export (PackedScene) var Inv 
 export (PackedScene) var Shp
@@ -16,6 +17,7 @@ var hlp
 var zro
 signal show_help
 var turn_counter = 0
+signal controls_pressed
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -74,6 +76,7 @@ func _on_shop_show(inventory):
 	else:
 		shp.queue_free()
 		shop_on = false
+	
 		
 func _on_help_show():
 	print("HELP")		
@@ -98,5 +101,6 @@ func _on_zero():
 	ui.add_child(zro)
 	zro.set_position(get_viewport_rect().size / 2)  
 	print("zero")
+
 
 

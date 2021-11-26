@@ -23,6 +23,7 @@ limit_right = 10000
 limit_bottom = 10000
 
 [node name="Light2D" type="Light2D" parent="."]
+visible = false
 modulate = Color( 0, 0, 0, 1 )
 self_modulate = Color( 0.647059, 0.647059, 0.647059, 1 )
 show_behind_parent = true

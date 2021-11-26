@@ -10,6 +10,7 @@ onready var l3 = get_node("Head/Label3")
 onready var labels = [l1,l2,l3]
 onready var map = main.map
 onready var hero = map.hero
+onready var controls = main.controls
 onready var inventory = hero.inventory
 var chair_set =[4,2]
 var lst
@@ -23,6 +24,7 @@ var good = blueprints[selected]
 var setups = GlobalVars.setups
 signal show_shop
 signal checkout
+
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -30,6 +32,7 @@ signal checkout
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+
 	print(inventory.items)
 	lst = inventory.get_total()
 	l1.text = str(lst[0])
@@ -53,30 +56,15 @@ func _ready():
 	tail.set_position(Vector2(0,h))
 	self.connect("show_shop", main, "_on_shop_show")
 	self.connect("checkout", main, "_on_checkout")
+	
 
 func _input(event):
 
 		if event is InputEventKey and event.pressed:
-			var ENTER = event.scancode == KEY_ENTER
-			var UP = (event.scancode == KEY_K or event.scancode ==KEY_UP)
-			var DOWN = (event.scancode == KEY_J or event.scancode == KEY_DOWN)
-			var CHECK = event.scancode == KEY_C
-			if UP:
-				if selected>0:
-					entries[selected].toggle_bg()
-					selected -= 1
-					entries[selected].toggle_bg()
-			if DOWN:
-				if selected<len(entries)-1:
-					entries[selected].toggle_bg()
-					selected += 1
-					entries[selected].toggle_bg()
-			if ENTER:
-				if buy(blueprints[selected]):
-					tail.drop_item(blueprints[selected], tail.furns)
-			if CHECK:
-				purchase()
+			pass
 			
+
+	
 			# Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
@@ -105,3 +93,4 @@ func purchase():
 		print(GlobalVars.furniture_collection)
 	self.emit_signal("show_shop", hero.inventory.items)
 	self.emit_signal("checkout")
+

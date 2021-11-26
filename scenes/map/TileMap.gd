@@ -13,6 +13,7 @@ onready var hud = main.get_node("HUD")
 onready var logger = hud.get_node("Log")
 onready var generator = get_node("generator")
 onready var pathfinder = get_node("pathfinder")
+
 export var map_array =["ground"]
 export var ids = [-1] 
 export var ents = ["dummy"]
@@ -367,6 +368,28 @@ func _input(event):
 			var SHP = event.scancode == KEY_S
 			if SHP:	
 					toggle_shop()
+			if main.shop_on:
+				var shop = main.shp
+				
+				var ENTER = event.scancode == KEY_ENTER
+				var UP = (event.scancode == KEY_K or event.scancode ==KEY_UP)
+				var DOWN = (event.scancode == KEY_J or event.scancode == KEY_DOWN)
+				var CHECK = event.scancode == KEY_C
+				if UP:
+					if shop.selected>0:
+						shop.entries[shop.selected].toggle_bg()
+						shop.selected -= 1
+						shop.entries[shop.selected].toggle_bg()
+				if DOWN:
+					if shop.selected<len(shop.entries)-1:
+						shop.entries[shop.selected].toggle_bg()
+						shop.selected += 1
+						shop.entries[shop.selected].toggle_bg()
+				if ENTER:
+					if shop.buy(shop.blueprints[shop.selected]):
+						shop.tail.drop_item(shop.blueprints[shop.selected], shop.tail.furns)
+				if CHECK:
+					shop.purchase()
 		if event is InputEventMouseButton:
 			if event.button_index == BUTTON_LEFT and event.pressed: 
 				if help_on ==true:
@@ -431,3 +454,72 @@ func new_floor(a,b,m,l1,l2):
 
 func type(line:String):
 	logger.text = logger.text+line+"\n"
+
+func _on_control_pressed(KEY):
+	var UP = KEY == "UP"
+	var DOWN = KEY =="DOWN"
+	var LEFT= KEY =="LEFT"
+	var RIGHT = KEY == "RIGHT"
+	var PICK = KEY == "PICK"
+	var INV = KEY == "INV"
+	var SHP = KEY == "SHP"
+	var NEW = KEY == "NEXT"
+	var BCK = KEY == "BACK"
+	var ENTER = KEY == "PICK"
+	
+	var CHECK = KEY == "DONE"
+	if main.shop_on == false and acting:
+		if UP:
+			hero.step(Vector2(0,-1))
+			
+		if DOWN:
+			hero.step(Vector2(0,1))
+			
+		if LEFT:
+			hero.step(Vector2(-1,0))
+			
+		if RIGHT:
+			hero.step(Vector2(1,0))
+			
+		if PICK:
+			map.pick(hero.get_map_pos())
+		if INV:	
+			toggle_inventory()
+		
+		if NEW and check_stairs(0,hero.get_map_pos()):
+			new_floor(a,b, total_enemies,current_floor, current_floor+1)
+			type("you go downstairs")
+		if BCK and check_stairs(1,hero.get_map_pos()):
+			new_floor(a,b, total_enemies,current_floor, max(1,current_floor-1))
+			type("you go upstairs")
+		for i in map.ents:
+			i.dothemove()
+
+		print(main.turn_counter)
+		emit_signal("turn_change")
+		if main.turn_counter%regen_rate == 0:
+			hero.fighter.heal(1)
+			var health = hero.fighter.hp
+			emit_signal("hp_change",health)
+		if SHP:	
+			toggle_shop()
+	else:	
+			if SHP:	
+					toggle_shop()
+			if main.shop_on:
+				var shop = main.shp
+				if UP:
+					if shop.selected>0:
+						shop.entries[shop.selected].toggle_bg()
+						shop.selected -= 1
+						shop.entries[shop.selected].toggle_bg()
+				if DOWN:
+					if shop.selected<len(shop.entries)-1:
+						shop.entries[shop.selected].toggle_bg()
+						shop.selected += 1
+						shop.entries[shop.selected].toggle_bg()
+				if ENTER:
+					if shop.buy(shop.blueprints[shop.selected]):
+						shop.tail.drop_item(shop.blueprints[shop.selected], shop.tail.furns)
+				if CHECK:
+					shop.purchase()

@@ -24,7 +24,7 @@ Str = ExtResource( 7 )
 script = ExtResource( 2 )
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
-color = Color( 0, 0, 0, 1 )
+color = Color( 0.168627, 0.164706, 0.164706, 1 )
 
 [node name="pathfinder" type="Node" parent="."]
 script = ExtResource( 5 )

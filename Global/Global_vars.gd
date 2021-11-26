@@ -1,5 +1,7 @@
 extends Node
 
+
+
 var rng = RandomNumberGenerator.new()
 
 var i_types = ["stick", "plank", "cloth"]

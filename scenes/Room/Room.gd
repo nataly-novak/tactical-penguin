@@ -17,6 +17,10 @@ var hlp
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	if OS.has_touchscreen_ui_hint() == false:
+		self.get_node("Quit/Label").visible = false
+		self.get_node("Repeat/Label").visible = false
+		
 	self.connect("show_room_help", self, "_on_room_help_show")
 	emit_signal("show_room_help")
 	load_layout()
@@ -99,3 +103,13 @@ func _on_room_help_show():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
+
+
+func _on_Repeat_pressed():
+	save_layout()
+	get_tree().change_scene("res://scenes/main/Main.tscn")
+
+
+func _on_Quit_pressed():
+	save_layout()
+	get_tree().change_scene("res://scenes/Starter/Starter.tscn")

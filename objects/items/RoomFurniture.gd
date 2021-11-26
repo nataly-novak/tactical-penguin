@@ -55,3 +55,6 @@ func _on_Node2D_input_event(viewport, event, shape_idx):
 			emit_signal("dragsignal")
 		elif event.button_index == BUTTON_LEFT and !event.pressed:
 			emit_signal("dragsignal")
+	elif event is InputEventScreenTouch:
+		if event.pressed and event.get_index() == 0:
+			self.position = event.get_position()
