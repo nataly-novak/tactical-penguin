@@ -21,9 +21,18 @@ var load_on = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	if GlobalVars.platform == "Android":
+		var dpi =  OS.get_screen_dpi()
+		if dpi >=160:
+			if dpi >=320:
+				GlobalVars.scale_param = 2
+			else:
+				GlobalVars.scale_param = 1.5
+	resize() 
 	for i in len(buttons):
 		buttons[i].button_id = i
 		buttons[i].text = lines[i]
+		get_tree().get_root().connect("size_changed", self, "resize")
 
 
 func _on_pressed_id(id):
@@ -46,6 +55,7 @@ func toggle_save():
 		svr = Svr.instance()
 		add_child(svr)
 		svr.set_position(get_viewport_rect().size/2)
+		
 		save_on = true
 	else:
 		svr.queue_free()
@@ -69,3 +79,13 @@ func _on_load_closed():
 	toggle_load()
 	get_tree().change_scene("res://scenes/main/Main.tscn")
 	print("on_LOAD_closed")
+
+func resize():
+	var height = 1080
+	var width = 1920
+	var h = float(get_viewport_rect().size.y)
+	var w = float(get_viewport_rect().size.x)
+	var rh = h/height
+	var rw = w/width
+	var s = min(rh,rw)
+	self.scale = Vector2(s,s)

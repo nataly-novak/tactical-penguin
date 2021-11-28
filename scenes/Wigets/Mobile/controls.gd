@@ -11,7 +11,8 @@ signal control_presed
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-
+	main.connect("rescale", self, "rescale")
+	resize()
 	if OS.has_touchscreen_ui_hint() == false:
 		for i in buttons:
 			
@@ -19,6 +20,7 @@ func _ready():
 			i.get_node("Label").visible = false
 	self.connect("control_presed", map, "_on_control_pressed") # Replace with function body.
 	self.connect("control_presed", main, "_on_control_pressed")
+	get_tree().get_root().connect("size_changed", self, "resize")
 	 # Replace with function body.
 
 
@@ -65,3 +67,11 @@ func _on_Shop_pressed():
 
 func _on_Items_pressed():
 	emit_signal("control_presed","INV")# Replace with function body.
+
+func resize():
+	rescale()
+	
+func rescale():
+	self.scale = Vector2(GlobalVars.scale_param,GlobalVars.scale_param)
+	self.position.x = get_viewport_rect().size.x-(self.get_node("Right").position.x-self.get_node("Left").position.x)/2 -128*GlobalVars.scale_param
+	self.position.y = get_viewport_rect().size.y-(self.get_node("Down").position.y-self.get_node("Done").position.y)/2 -80*GlobalVars.scale_param

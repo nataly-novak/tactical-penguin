@@ -20,7 +20,8 @@ func _ready():
 	if OS.has_touchscreen_ui_hint() == false:
 		self.get_node("Quit/Label").visible = false
 		self.get_node("Repeat/Label").visible = false
-		
+	self.get_node("Quit").scale = Vector2(GlobalVars.scale_param, GlobalVars.scale_param)
+	self.get_node("Repeat").scale = Vector2(GlobalVars.scale_param, GlobalVars.scale_param)	
 	self.connect("show_room_help", self, "_on_room_help_show")
 	emit_signal("show_room_help")
 	load_layout()
@@ -94,7 +95,7 @@ func _on_room_help_show():
 
 		print(hlp)
 		self.add_child(hlp)
-
+		hlp.scale = Vector2(GlobalVars.scale_param, GlobalVars.scale_param)
 		hlp.set_position(get_viewport_rect().size / 2) 
 		help_on = true
 	else:

@@ -49,6 +49,7 @@ var acting = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	rescale()
 	acting = true 
 	set_scene(a,b, total_enemies, 1)
 	current_floor = 1
@@ -59,6 +60,7 @@ func _ready():
 	self.connect("lvl_change",self.get_parent(),"_on_level_change")
 	self.connect("turn_change",self.get_parent(),"_on_turn_change")
 	self.connect("zero", main,"_on_zero")
+	main.connect("rescale", self, "rescale")
 	logger.text = logger.text+"Welocme to the Infinite Shop.\n"
 
 
@@ -376,15 +378,9 @@ func _input(event):
 				var DOWN = (event.scancode == KEY_J or event.scancode == KEY_DOWN)
 				var CHECK = event.scancode == KEY_C
 				if UP:
-					if shop.selected>0:
-						shop.entries[shop.selected].toggle_bg()
-						shop.selected -= 1
-						shop.entries[shop.selected].toggle_bg()
+					shop.go_up()
 				if DOWN:
-					if shop.selected<len(shop.entries)-1:
-						shop.entries[shop.selected].toggle_bg()
-						shop.selected += 1
-						shop.entries[shop.selected].toggle_bg()
+					shop.go_down()
 				if ENTER:
 					if shop.buy(shop.blueprints[shop.selected]):
 						shop.tail.drop_item(shop.blueprints[shop.selected], shop.tail.furns)
@@ -509,17 +505,14 @@ func _on_control_pressed(KEY):
 			if main.shop_on:
 				var shop = main.shp
 				if UP:
-					if shop.selected>0:
-						shop.entries[shop.selected].toggle_bg()
-						shop.selected -= 1
-						shop.entries[shop.selected].toggle_bg()
+					shop.go_up()
 				if DOWN:
-					if shop.selected<len(shop.entries)-1:
-						shop.entries[shop.selected].toggle_bg()
-						shop.selected += 1
-						shop.entries[shop.selected].toggle_bg()
+					shop.go_down()
 				if ENTER:
 					if shop.buy(shop.blueprints[shop.selected]):
 						shop.tail.drop_item(shop.blueprints[shop.selected], shop.tail.furns)
 				if CHECK:
 					shop.purchase()
+
+func rescale():
+	self.scale = Vector2(GlobalVars.scale_param,GlobalVars.scale_param)

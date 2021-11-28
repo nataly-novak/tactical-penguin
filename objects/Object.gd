@@ -33,10 +33,16 @@ func getimage():
 			objectsprite.set_texture(whaletex)
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	map.main.connect("rescale", self, "rescale")
+	get_tree().get_root().connect("size_changed", self, "resize")
+	var h = get_viewport_rect().size.y
+	var w = get_viewport_rect().size.x
+	var right_limit = w-64*5
+	var bottom_limit = h-64
 	if o_type == "hero":
 		camera.current = true
-		camera.limit_right = 64*map.a+14*64+96
-		camera.limit_bottom = 64*map.b+96
+		
+		resize()
 		fighter.set_params(GlobalVars.hero_params)
 		get_node("Light2D2").enabled = true
 		
@@ -104,3 +110,19 @@ func dothemove():
 		
 func set_hp(hp:int):
 	fighter.hp = hp
+
+func resize():
+	
+	rescale()
+
+	
+func rescale():
+
+	var h = get_viewport_rect().size.y
+	var w = get_viewport_rect().size.x
+	var right_limit = w-64*5
+	var bottom_limit = h-64
+	camera.limit_right = GlobalVars.scale_param*64*(map.a)+(get_viewport_rect().size.x)/2+320*GlobalVars.scale_param+32-477*(right_limit-477)/(1980-477-320*GlobalVars.scale_param)
+	#camera.limit_right = 64*map.a*GlobalVars.scale_param.x+get_viewport_rect().size.x/2 
+	#camera.limit_right = 64*map.a+get_viewport_rect().size.x/2-((right_limit/2)+9*64-17*64/1165*(right_limit-477))
+	camera.limit_bottom = GlobalVars.scale_param*64*map.b+96

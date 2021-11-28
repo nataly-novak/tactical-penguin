@@ -20,6 +20,8 @@ Rfn = ExtResource( 1 )
 Hlp = ExtResource( 5 )
 
 [node name="Sprite2" type="Sprite" parent="."]
+position = Vector2( -156, 0 )
+scale = Vector2( 1.16354, 1 )
 texture = ExtResource( 8 )
 centered = false
 
@@ -30,11 +32,11 @@ texture = ExtResource( 2 )
 centered = false
 
 [node name="Node2D" parent="." instance=ExtResource( 4 )]
-position = Vector2( 64, 822 )
+position = Vector2( 64, 820 )
 scale = Vector2( 0.75, 0.75 )
 
 [node name="Repeat" type="TouchScreenButton" parent="."]
-position = Vector2( 1125.23, 635.282 )
+position = Vector2( 1761.23, 672.282 )
 normal = ExtResource( 9 )
 pressed = ExtResource( 6 )
 visibility_mode = 1
@@ -54,7 +56,7 @@ __meta__ = {
 }
 
 [node name="Quit" type="TouchScreenButton" parent="."]
-position = Vector2( 1125.23, 720.282 )
+position = Vector2( 1761.23, 842.282 )
 normal = ExtResource( 9 )
 pressed = ExtResource( 6 )
 visibility_mode = 1

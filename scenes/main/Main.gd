@@ -18,6 +18,10 @@ var zro
 signal show_help
 var turn_counter = 0
 signal controls_pressed
+var right_lim
+var bottom_lim
+signal rescale
+onready var dpier = get_node("HUD/CheckButton")
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -28,6 +32,8 @@ func _ready():
 	self.connect("show_help", main, "_on_help_show")
 	hud.update_hp(map.hp)
 	emit_signal("show_help")
+	if GlobalVars.platform != "HTML5":
+		dpier.visible = false
 # Replace with function body.
 
 
@@ -55,7 +61,7 @@ func _on_inventory_show(inventory):
 
 		print(inv)
 		ui.add_child(inv)
-
+		inv.scale = Vector2(GlobalVars.scale_param, GlobalVars.scale_param)
 		inv.set_position(get_viewport_rect().size / 2) 
 		inventory_on = true
 	else:
@@ -70,8 +76,8 @@ func _on_shop_show(inventory):
 
 		print(shp)
 		ui.add_child(shp)
-
-		shp.set_position(Vector2(get_viewport_rect().size.x / 2-224,get_viewport_rect().size.y/2-512)) 
+		shp.scale = Vector2(GlobalVars.scale_param, GlobalVars.scale_param)
+		shp.set_position(Vector2(get_viewport_rect().size.x / 2-224*GlobalVars.scale_param,0)) 
 		shop_on = true
 	else:
 		shp.queue_free()
@@ -85,7 +91,7 @@ func _on_help_show():
 
 		print(hlp)
 		ui.add_child(hlp)
-
+		hlp.scale = Vector2(GlobalVars.scale_param, GlobalVars.scale_param)
 		hlp.set_position(get_viewport_rect().size / 2) 
 		help_on = true
 	else:
@@ -104,3 +110,8 @@ func _on_zero():
 
 
 
+
+
+func _on_CheckButton_toggled(button_pressed):
+	GlobalVars.scale_param = 1+int(button_pressed)
+	emit_signal("rescale")
