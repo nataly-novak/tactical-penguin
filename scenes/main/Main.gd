@@ -29,11 +29,13 @@ onready var dpier = get_node("HUD/CheckButton")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+
 	self.connect("show_help", main, "_on_help_show")
 	hud.update_hp(map.hp)
 	emit_signal("show_help")
-	if GlobalVars.platform != "HTML5":
-		dpier.visible = false
+
+	dpier.visible = false
+	get_tree().get_root().connect("size_changed", self, "rescale")
 # Replace with function body.
 
 
@@ -115,3 +117,4 @@ func _on_zero():
 func _on_CheckButton_toggled(button_pressed):
 	GlobalVars.scale_param = 1+int(button_pressed)
 	emit_signal("rescale")
+

@@ -23,11 +23,14 @@ var load_on = false
 func _ready():
 	if GlobalVars.platform == "Android":
 		var dpi =  OS.get_screen_dpi()
-		if dpi >=160:
+		if dpi >=160  :
 			if dpi >=320:
 				GlobalVars.scale_param = 2
 			else:
 				GlobalVars.scale_param = 1.5
+	else:
+		if self.get_viewport_rect().size.x<1500:
+			GlobalVars.scale_param = self.get_viewport_rect().size.x/1500	
 	resize() 
 	for i in len(buttons):
 		buttons[i].button_id = i
@@ -89,3 +92,7 @@ func resize():
 	var rw = w/width
 	var s = min(rh,rw)
 	self.scale = Vector2(s,s)
+	if self.get_viewport_rect().size.x<1500:
+			GlobalVars.scale_param = self.get_viewport_rect().size.x/1500	
+	else:
+		GlobalVars.scale_param = 1

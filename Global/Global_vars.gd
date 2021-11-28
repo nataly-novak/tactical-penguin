@@ -64,7 +64,9 @@ var saved_room = ["save"]
 var platform = OS.get_name()
 
 var scale_param = 1
+
 var def_font_size = 18
+var label_font_size = 40
 
 #var saved_room = [["chair", Vector2(300,300)]]
 # Called when the node enters the scene tree for the first time.
