@@ -10,6 +10,8 @@ onready var crit_mult =2
 onready var crit_chance = 20
 onready var character = get_parent()
 onready var max_hp = 300
+onready var ex = 1
+onready var radius = 7 
 onready var map = character.get_parent()
 
 # Declare member variables here. Examples:
@@ -62,17 +64,16 @@ func _ready():
 			 # Replace with function body.
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
+# Called every frame. 'delta' un the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
 
 	
 	
 func get_damage (damage):
-	print(damage)
-	print(character.o_type," health ",self.hp)
+
 	self.hp = self.hp-damage
-	print(character.o_type," damage ",self.hp)	
+
 	if self.hp<0:
 		self.hp = 0 
 		return 0
@@ -89,6 +90,8 @@ func set_params(params):
 	self.crit_mult = params[6]
 	self.crit_chance = params[7]
 	self.max_hp = params[0]
+	self.ex = params[8]
+	self.radius = params[9]
 		
 func get_AC():
 	return self.AC
@@ -112,7 +115,9 @@ func get_chance():
 	return self.crit_chance
 	
 func get_mult():
-	return self.crit_mult		
+	return self.crit_mult
+	
+			
 
 func heal(heal_value):
 	self.hp = min(self.hp+heal_value, self.max_hp)

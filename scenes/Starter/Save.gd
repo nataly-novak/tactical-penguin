@@ -28,3 +28,6 @@ func _on_Close_pressed():
 func _on_Write_pressed():
 	GlobalVars.save_to_disk()
 	emit_signal("save_closed") # Replace with function body.
+
+
+	

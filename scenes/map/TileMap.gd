@@ -31,6 +31,7 @@ signal turn_change
 signal show_help
 var i_types = GlobalVars.i_types
 var hero
+var walrus
 var survivers = ["empty"]
 var hero_positions = ["start"]
 var stairs_position = ["noescape"]
@@ -38,10 +39,13 @@ var stairs_array = ["defaultstair"]
 var current_floor = 0
 signal show_inventory
 signal show_shop
+signal show_walrus
 var help_on = true
 var regen_rate = 10
 signal zero
 var acting = true
+var lvl = 1
+var cur_exp = 0
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -61,6 +65,7 @@ func _ready():
 	self.connect("turn_change",self.get_parent(),"_on_turn_change")
 	self.connect("zero", main,"_on_zero")
 	main.connect("rescale", self, "rescale")
+	self.connect("show_walrus", main, "_on_walrus_show")
 	logger.text = logger.text+"Welocme to the Infinite Shop.\n"
 
 
@@ -71,20 +76,24 @@ func set_scene(a: int, b:int, m:int, l: int):
 
 
 	used_cells = map.get_used_cells_by_id(0)
-	print(l)
+
 	if l >=len(hero_positions) or len(hero_positions)==1:
 		hero_position = new_spawn()
-		print("new")
+
 	else:
-		print("old")
+
 		hero_position = hero_positions[l]
 	if not hero:
-		print("NO HERO")
+
 		hero = spawn("hero", hero_position)
 	else:
 		hero.set_map_pos(hero_position)
 		used_cells.erase(hero_position)
 	hp = hero.fighter.hp
+	
+	if current_floor >GlobalVars.min_walru_depth and GlobalVars.rolled(1,GlobalVars.walrus_freq)==GlobalVars.walrus_freq:
+		walrus = spawn("walrus", new_spawn())
+		type("You smell something delicious here")
 	
 	if l >=len(survivers):
 		for i in range(0,m):
@@ -97,16 +106,15 @@ func set_scene(a: int, b:int, m:int, l: int):
 			ents[-2].set_hp(i[0])
 			
 	if l>=len(stairs_position):
-		if l ==1:
-			add_stairs(stair_pos())
-		else:
-			add_stairs(one_stair_pos(hero.get_map_pos()))
+		add_stairs(one_stair_pos(hero.get_map_pos()))
 	else:
-		print(stairs_position[l])
+
 		add_existing_stairs(stairs_position[l]) 
 
-	
+
 	map.pathfinder.get_a_cells()
+	drop_random_items()
+	
 	
 
 func get_level(a,b,l:int):
@@ -131,7 +139,7 @@ func spawn(flavor: String, location: Vector2):
 	ents.append(obj)
 	add_child(obj)
 	obj.set_map_pos(location)
-	if flavor != "hero":
+	if flavor != "hero" and flavor != "walrus":
 		obj.o_friendly = "foe"
 	used_cells.erase(location)
 
@@ -149,7 +157,7 @@ func stair_pos():
 	ids.remove(id1)
 	var id2 = generator.rng.randi_range(0, len(ids)-1)
 	var loc2 = used_cells[id2]
-	print([loc1, loc2])
+
 	return [loc1,loc2]
 	
 func one_stair_pos(loc1:Vector2 ):
@@ -158,7 +166,7 @@ func one_stair_pos(loc1:Vector2 ):
 	ids.remove(id1)
 	var id2 = generator.rng.randi_range(0, len(ids)-1)
 	var loc2 = used_cells[id2]
-	print([loc1, loc2])
+
 	return [loc2,loc1]
 
 func add_stairs (positions) :
@@ -212,6 +220,26 @@ func drop_item(flavor: String, location: Vector2):
 	add_child(itm)
 	itm.set_map_pos(location)
 	
+func rand_item():
+	var arr =[0,1,1]
+	if GlobalVars.rolled(1,GlobalVars.blueprint_freq) == GlobalVars.blueprint_freq and current_floor>GlobalVars.min_blueprint_depth:
+		return (len(hero.inventory.result)-1)
+	else:
+		
+		var id = rng.randi_range(0,2)
+		var numb = arr[id]
+		
+		var new_item = rng.randi_range(0, len(hero.inventory.result)-2)
+		return new_item
+	
+func drop_random_items():
+	var n = rng.randi_range(1, GlobalVars.max_free_items)
+	for i in n:
+		var pos = new_spawn()
+		drop_item(i_types[rand_item()],pos)
+		
+		
+	
 		
 func is_blocked(cell):
 	if get_cellv(cell)==1:
@@ -221,8 +249,10 @@ func is_blocked(cell):
 			for i in ents:
 
 				if i.get_map_pos() ==cell:
-
-					return "foe"
+					if i.o_friendly == "foe":
+						return "foe"
+					else:
+						return i.o_type
 		return "empty"
 
 func new_spawn():
@@ -265,7 +295,9 @@ func _on_hit(attacker,damager):
 		if dam.o_type != "hero":
 			type(dam.o_type+ " disappears!")
 			var pos = dam.get_map_pos()
-			
+			var exper = dam.fighter.ex
+			cur_exp+=exper
+			check_lvl()
 			
 			#print("inventory:", drop,pos)
 			dam.queue_free()
@@ -282,10 +314,7 @@ func _on_hit(attacker,damager):
 				drop_item(drop, pos)
 			if monsters==0:
 				print("win")
-				hero.get_node("Light2D").enabled = false
-				hero.get_node("Light2D2").enabled = false
-				var modul = get_node("CanvasModulate")
-				modul.set_color(Color(1, 1, 1, 1) )
+				type("The level was cleared") 
 				
 		else:
 			print("lose")
@@ -297,11 +326,11 @@ func _on_hit(attacker,damager):
 			emit_signal("zero")
 			
 func check_stairs(direction:int, loc: Vector2):
-	print(stairs_array)
+
 	var res = false
 	for i in range(len(stairs_array)):
 		if (stairs_array[i] is  String) == false:
-			print([stairs_array[i].get_dir(),stairs_array[i].get_map_pos(), direction])
+
 			if stairs_array[i].get_map_pos() == loc and direction == stairs_array[i].get_dir():
 				res = true
 	return res		
@@ -310,7 +339,10 @@ func pick(loc:Vector2):
 	var it = find_itm(loc)
 	if it >=0:
 		var flav = itms[it].i_type
-		type("you picked a "+flav)
+		if flav != "food":
+			type("you picked a "+flav)
+		else:
+			type("you picked some "+flav)
 		var flav_id = i_types.find(flav)
 		var item = itms[it]
 		item.queue_free()
@@ -318,7 +350,15 @@ func pick(loc:Vector2):
 		iids.remove(it)
 		if iids == []:
 			iids = [-2]
-		hero.inventory.add_item(flav_id)
+		if flav_id<3:	
+			hero.inventory.add_item(flav_id)
+		elif flav == "food":
+			hero.fighter.heal(GlobalVars.food_heal)
+			var health = hero.fighter.hp
+			emit_signal("hp_change",health)
+		elif flav == "blueprint":
+			var x = GlobalVars.get_bp()
+			GlobalVars.learn_bp(x)
 		
 
 func _input(event):
@@ -360,7 +400,7 @@ func _input(event):
 				for i in map.ents:
 					i.dothemove()
 
-				print(main.turn_counter)
+
 				emit_signal("turn_change")
 				if main.turn_counter%regen_rate == 0:
 					hero.fighter.heal(1)
@@ -391,6 +431,9 @@ func _input(event):
 				if help_on ==true:
 					emit_signal("show_help")
 					help_on = false
+				if main.shop_on ==true:
+					toggle_shop()
+					main.shop_on = false
 
 func toggle_inventory():
 	self.emit_signal("show_inventory", hero.inventory.items)
@@ -399,27 +442,27 @@ func toggle_shop():
 	self.emit_signal("show_shop", hero.inventory.items)
 
 func new_floor(a,b,m,l1,l2):
-	print("NEW FLOOR")
+
 	var mon_surv = []
 	for i in ents:
 		if i.o_friendly == "foe":
 			var pos = i.get_map_pos()
 			var hp = i.fighter.get_hp()
 			var state = [hp, pos]
-			print(state)
+
 			mon_surv.append(state)
 	if len(survivers)<=l1:		
 		survivers.append(mon_surv)
-		print("NEW ")
+
 	else:
 		survivers[l1]=[]+mon_surv
-		print("OLD ")
+
 	if len(hero_positions)<=l1:
 		hero_positions.append(hero.get_map_pos())
-		print("NEW ",hero_positions)
+
 	else:
 		hero_positions[l1]=hero.get_map_pos()
-		print("OLD ", hero_positions)
+
 	while len(ents)>1:
 			var j = ents[-1]
 			j.queue_free()
@@ -440,12 +483,12 @@ func new_floor(a,b,m,l1,l2):
 		var j = stairs_array[-1]
 		j.queue_free()
 		stairs_array.pop_back()
-	print(hero_positions)
+
 	hp = hero.fighter.hp		 
 	set_scene(a,b,m,l2)		
 	current_floor = l2
 	hero.fighter.hp = hp
-	print(hero.fighter.hp)
+
 	emit_signal("lvl_change",current_floor)
 
 func type(line:String):
@@ -491,7 +534,7 @@ func _on_control_pressed(KEY):
 		for i in map.ents:
 			i.dothemove()
 
-		print(main.turn_counter)
+
 		emit_signal("turn_change")
 		if main.turn_counter%regen_rate == 0:
 			hero.fighter.heal(1)
@@ -516,3 +559,34 @@ func _on_control_pressed(KEY):
 
 func rescale():
 	self.scale = Vector2(GlobalVars.scale_param,GlobalVars.scale_param)
+
+func check_lvl():
+	
+	if cur_exp>=GlobalVars.level_ups[lvl]:
+		print("LEVELUP")
+		lvl+=1
+		hero.fighter.max_hp +=10
+		hero.fighter.heal(10)
+		var health = hero.fighter.hp
+		emit_signal("hp_change",health)
+		if lvl%2 == 0:
+			hero.fighter.AC+=1
+		if lvl%3 ==0:
+			hero.fighter.BAB+=1
+		type(("You leveled up! Max HP: "+str(hero.fighter.max_hp)+", your AC: "+ str(hero.fighter.AC)+", your attack: "+ str(hero.fighter.BAB)))
+		
+func _on_walrus():
+	type("You encounter walrus")
+	print("Walrus")
+	if walrus.has_food:
+		emit_signal("show_walrus")
+		print("Walrus")
+	else:
+		type("He currently has no food for you.") 
+		
+
+func _on_food_eaten():
+	hero.fighter.heal(GlobalVars.pasta_heal)
+	var health = hero.fighter.hp
+	emit_signal("hp_change",health)
+	walrus.has_food = false

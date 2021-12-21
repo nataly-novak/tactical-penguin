@@ -1,0 +1,74 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Fonts/new_theme.tres" type="Theme" id=1]
+[ext_resource path="res://Fonts/UbuntuMono-Regular.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://graphics/kitchen/pasta.png" type="Texture" id=3]
+[ext_resource path="res://Fonts/FjordOne-Regular.otf" type="DynamicFontData" id=4]
+[ext_resource path="res://graphics/kitchen/walrus.png" type="Texture" id=5]
+[ext_resource path="res://scenes/Kitchen/Kitchen.gd" type="Script" id=6]
+
+[sub_resource type="DynamicFont" id=1]
+size = 24
+font_data = ExtResource( 4 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 24
+font_data = ExtResource( 2 )
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource( 6 )
+
+[node name="Walrus" type="Sprite" parent="."]
+scale = Vector2( 0.2, 0.2 )
+texture = ExtResource( 5 )
+
+[node name="Food" type="Sprite" parent="."]
+position = Vector2( 165, -23 )
+scale = Vector2( 0.2, 0.2 )
+texture = ExtResource( 3 )
+
+[node name="Yes" type="Button" parent="."]
+margin_left = 214.0
+margin_top = 132.0
+margin_right = 279.0
+margin_bottom = 187.0
+rect_pivot_offset = Vector2( 32, 27.5 )
+theme = ExtResource( 1 )
+custom_fonts/font = SubResource( 1 )
+text = "Yes"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="No" type="Button" parent="."]
+margin_left = 288.0
+margin_top = 132.0
+margin_right = 353.0
+margin_bottom = 187.0
+rect_pivot_offset = Vector2( 32, 27.5 )
+theme = ExtResource( 1 )
+custom_fonts/font = SubResource( 1 )
+text = "No"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Speech" type="Label" parent="."]
+margin_left = -343.0
+margin_top = 141.0
+margin_right = 175.0
+margin_bottom = 166.0
+custom_fonts/font = SubResource( 2 )
+text = "Do you want something to eat?"
+align = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="pressed" from="Yes" to="." method="_on_Yes_pressed"]
+[connection signal="pressed" from="No" to="." method="_on_No_pressed"]
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

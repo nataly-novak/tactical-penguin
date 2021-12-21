@@ -8,19 +8,23 @@ export (PackedScene) var Inv
 export (PackedScene) var Shp
 export (PackedScene) var Hlp
 export (PackedScene) var Zro
+export (PackedScene) var Wlr
 var inventory_on = false
 var shop_on = false
 var help_on = false
+var walrus_on = false
 var inv
 var shp
 var hlp
 var zro
+var wlr
 signal show_help
 var turn_counter = 0
 signal controls_pressed
 var right_lim
 var bottom_lim
 signal rescale
+signal eaten
 onready var dpier = get_node("HUD/CheckButton")
 # Declare member variables here. Examples:
 # var a = 2
@@ -36,6 +40,7 @@ func _ready():
 
 	dpier.visible = false
 	get_tree().get_root().connect("size_changed", self, "rescale")
+	self.connect("eaten", map, "_on_food_eaten")
 # Replace with function body.
 
 
@@ -46,18 +51,29 @@ func _on_hp_change(hp):
 	hud.update_hp(hp)
 	
 func _on_level_change(lvl):
-	print("SIGNAL ",lvl)
+
 	hud.update_lvl(lvl)
 	
 func _on_turn_change():
-	print("SIGNAL",turn_counter)
+
 	turn_counter+=1
 	
 	hud.update_turn(turn_counter)	
 		
+func _on_walrus_show():
+	if walrus_on == false:
+		wlr = Wlr.instance()
+		print("On walrus show")
+		ui.add_child(wlr)
+		wlr.scale = Vector2(GlobalVars.scale_param, GlobalVars.scale_param)
+		wlr.set_position(get_viewport_rect().size / 2) 
+		walrus_on = true
+	else:
+		wlr.queue_free()
+		walrus_on = false
 	
 func _on_inventory_show(inventory):
-	print("TOGGLE:", inventory_on)
+
 	if  inventory_on == false:
 		inv = Inv.instance()
 
@@ -72,11 +88,11 @@ func _on_inventory_show(inventory):
 		
 				
 func _on_shop_show(inventory):
-	print("TOGGLE:", shop_on)
+
 	if  shop_on == false:
 		shp = Shp.instance()
 
-		print(shp)
+
 		ui.add_child(shp)
 		shp.scale = Vector2(GlobalVars.scale_param, GlobalVars.scale_param)
 		shp.set_position(Vector2(get_viewport_rect().size.x / 2-224*GlobalVars.scale_param,0)) 
@@ -87,7 +103,7 @@ func _on_shop_show(inventory):
 	
 		
 func _on_help_show():
-	print("HELP")		
+
 	if  help_on == false:
 		hlp = Hlp.instance()
 
@@ -108,7 +124,7 @@ func _on_zero():
 	zro = Zro.instance()
 	ui.add_child(zro)
 	zro.set_position(get_viewport_rect().size / 2)  
-	print("zero")
+
 
 
 
@@ -118,3 +134,5 @@ func _on_CheckButton_toggled(button_pressed):
 	GlobalVars.scale_param = 1+int(button_pressed)
 	emit_signal("rescale")
 
+func _on_food_bought():
+	emit_signal("eaten")

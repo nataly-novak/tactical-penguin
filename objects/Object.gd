@@ -5,6 +5,7 @@ export var o_friendly = "friendly"
 export var o_number = -1
 var playertex = GlobalVars.playertex
 var whaletex = GlobalVars.whaletex
+var walrustex = GlobalVars.walrustex
 onready var objectsprite = get_node("Sprite")
 onready var camera = get_node("Camera2D")
 onready var fighter = get_node("Fighter")
@@ -13,6 +14,8 @@ onready var map = get_parent()
 onready var pathfinder = map.pathfinder
 onready var aStar = map.pathfinder.aStar
 signal hit (attacker, damager)
+signal walrus
+export var has_food = false
 
 # Declare member variables here. Examples:
 # var a = 2
@@ -31,6 +34,8 @@ func getimage():
 			objectsprite.set_texture(playertex)
 		"whale":
 			objectsprite.set_texture(whaletex)
+		"walrus":
+			objectsprite.set_texture(walrustex)
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	map.main.connect("rescale", self, "rescale")
@@ -58,13 +63,17 @@ func _ready():
 	getimage()
 	self.connect("hit",self.get_parent(), "_on_hit")
 
+	self.connect("walrus", self.get_parent(), "_on_walrus")
+	if o_type == "walrus":
+		has_food = true
+
 func step(dir):
 	dir.x = clamp(dir.x, -1, 1)
 	dir.y = clamp(dir.y, -1, 1)
 	var old_cell = get_map_pos()
 	var new_cell = get_map_pos() + dir
 	var check = map.is_blocked(new_cell)
-	
+
 	if  check== "empty" :
 		set_map_pos(new_cell)
 		map.pathfinder.occupy(new_cell)
@@ -74,6 +83,8 @@ func step(dir):
 		new_cell = old_cell
 		if o_type == "hero":
 			self.emit_signal("hit",old_cell,enemy_cell)
+	elif check=="walrus":
+		emit_signal("walrus")
 			
 		
 	else:
@@ -100,7 +111,7 @@ func dothemove():
 			#map.pathfinder.get_a_cells()
 			var paths = pathfinder.get_a_path(aStar, self.get_map_pos(), map.hero_position)
 
-			if paths != [] and len(paths)>2 and len(paths)<7:
+			if paths != [] and len(paths)>2 and len(paths)<fighter.radius:
 				var step_dir = get_directions(self.get_map_pos(), paths[1])
 				step(step_dir)
 				
@@ -125,4 +136,4 @@ func rescale():
 	camera.limit_right = GlobalVars.scale_param*64*(map.a)+(get_viewport_rect().size.x)/2+320*GlobalVars.scale_param+32-477*(right_limit-477)/(1980-477-320*GlobalVars.scale_param)
 	#camera.limit_right = 64*map.a*GlobalVars.scale_param.x+get_viewport_rect().size.x/2 
 	#camera.limit_right = 64*map.a+get_viewport_rect().size.x/2-((right_limit/2)+9*64-17*64/1165*(right_limit-477))
-	camera.limit_bottom = GlobalVars.scale_param*64*map.b+96
+	camera.limit_bottom = GlobalVars.scale_param*64*map.b+96+64

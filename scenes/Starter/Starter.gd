@@ -14,6 +14,7 @@ var ldr
 var save_on = false
 var load_on = false
 
+var s =1
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -58,7 +59,7 @@ func toggle_save():
 		svr = Svr.instance()
 		add_child(svr)
 		svr.set_position(get_viewport_rect().size/2)
-		
+
 		save_on = true
 	else:
 		svr.queue_free()
@@ -69,6 +70,7 @@ func toggle_load():
 		ldr = Ldr.instance()
 		add_child(ldr)
 		ldr.set_position(get_viewport_rect().size/2)
+		
 		load_on = true
 	else:
 		ldr.queue_free()
@@ -90,7 +92,7 @@ func resize():
 	var w = float(get_viewport_rect().size.x)
 	var rh = h/height
 	var rw = w/width
-	var s = min(rh,rw)
+	s = min(rh,rw)
 	self.scale = Vector2(s,s)
 	if self.get_viewport_rect().size.x<1500:
 			GlobalVars.scale_param = self.get_viewport_rect().size.x/1500	

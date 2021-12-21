@@ -26,6 +26,7 @@ signal show_shop
 signal checkout
 var top = 0
 var bottom = 1
+var known_bp = GlobalVars.known_bp
 
 # Declare member variables here. Examples:
 # var a = 2
@@ -44,7 +45,7 @@ func _ready():
 	var h = 0
 	var ht = 0
 	
-	for i in (len(blueprints)):
+	for i in (len(known_bp)):
 		print(i)
 		if entries == ["head"]:
 			entries.clear()
@@ -57,7 +58,7 @@ func _ready():
 		else:
 			body.visible = false
 		body.set_position(Vector2(0,h))
-		body.set_item(blueprints[i])
+		body.set_item(blueprints[known_bp[i]])
 		if i == selected:
 			body.toggle_bg()
 	tail = Tail.instance()
@@ -83,7 +84,7 @@ func buy(flavor):
 	var j = blueprints.find(flavor)
 	item  = setups[j]
 	var lst_new =[] 		
-	for i in len(lst):
+	for i in len(lst)-2:
 		var res = lst[i]-item[i]	
 		if res < 0:
 			return false

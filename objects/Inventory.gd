@@ -1,11 +1,11 @@
 extends Node
 var rng = RandomNumberGenerator.new()
-
+onready var object = get_parent()
 
 var items = []
 
 var max_items = 1
-var result = [0,0,0] 
+var result = [0,0,0,0,0] 
 var item_types = len(result)
 
 func add_item(obj: int):
@@ -22,11 +22,15 @@ func find_item(obj: int):
 func generate_items():
 	rng.randomize()
 	var arr =[0,1,1]
-	var id = rng.randi_range(0,2)
-	var numb = arr[id]
-	for i in range(numb):
-		var new_item = rng.randi_range(0, item_types-1)
-		add_item(new_item)
+	if GlobalVars.rolled(1,GlobalVars.blueprint_freq) == GlobalVars.blueprint_freq and object.map.current_floor>GlobalVars.min_blueprint_depth:
+		add_item(len(result)-1)
+	else:
+		
+		var id = rng.randi_range(0,2)
+		var numb = arr[id]
+		for i in range(numb):
+			var new_item = rng.randi_range(0, item_types-2)
+			add_item(new_item)
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
