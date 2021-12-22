@@ -5,6 +5,7 @@ export var o_friendly = "friendly"
 export var o_number = -1
 var playertex = GlobalVars.playertex
 var whaletex = GlobalVars.whaletex
+var coolwhaletex = GlobalVars.coolwhaletex
 var walrustex = GlobalVars.walrustex
 onready var objectsprite = get_node("Sprite")
 onready var camera = get_node("Camera2D")
@@ -29,13 +30,8 @@ func get_map_pos():
 	return map.world_to_map(get_position())
 
 func getimage():
-	match o_type:
-		"hero":
-			objectsprite.set_texture(playertex)
-		"whale":
-			objectsprite.set_texture(whaletex)
-		"walrus":
-			objectsprite.set_texture(walrustex)
+	objectsprite.set_texture(GlobalVars.get_enemy_tex(o_type))
+	
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	map.main.connect("rescale", self, "rescale")
@@ -56,7 +52,7 @@ func _ready():
 	if o_type != "hero":
 		get_node("Light2D").enabled = false
 		get_node("Light2D2").enabled = false
-		fighter.set_params(GlobalVars.whale_params)
+		fighter.set_params(GlobalVars.get_enemy_params(o_type))
 		inventory.generate_items()
 			
 	set_process_input(true)
@@ -106,14 +102,18 @@ func get_directions(start:Vector2, end:Vector2):
 	return end-start
 	
 func dothemove():
-	match o_type:
-		"whale":
+	match o_friendly:
+		"foe":
 			#map.pathfinder.get_a_cells()
 			var paths = pathfinder.get_a_path(aStar, self.get_map_pos(), map.hero_position)
 
 			if paths != [] and len(paths)>2 and len(paths)<fighter.radius:
-				var step_dir = get_directions(self.get_map_pos(), paths[1])
-				step(step_dir)
+
+				print(o_type,fighter.speed, range(0,fighter.speed))
+				for i in range(0,fighter.speed):
+					var step_dir = get_directions(self.get_map_pos(), paths[i+1])
+					step(step_dir)
+
 				
 			elif len(paths) == 2:
 				self.emit_signal("hit",paths[0],paths[1])

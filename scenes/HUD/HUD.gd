@@ -29,7 +29,7 @@ func update_turn(turn):
 func _ready():
 
 	GlobalVars.label_font_size = hp_label.get_font("font").size
-	logger.text+=str(GlobalVars.label_font_size)
+
 	self.get_node("Log").get_font("normal_font").size=GlobalVars.def_font_size*GlobalVars.scale_param
 	resize()
 	get_tree().get_root().connect("size_changed", self, "resize") # Replace with function body.

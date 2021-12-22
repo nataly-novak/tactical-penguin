@@ -12,6 +12,7 @@ onready var character = get_parent()
 onready var max_hp = 300
 onready var ex = 1
 onready var radius = 7 
+onready var speed = 1
 onready var map = character.get_parent()
 
 # Declare member variables here. Examples:
@@ -46,7 +47,7 @@ func get_attack(number, dice, attack, bonus, mult, chance):
 		else:
 			damage = get_damage(0)
 			map.type("It was a miss ")
-	map.type("--------------------------------")
+
 	return damage
 			
 	
@@ -60,6 +61,10 @@ func _ready():
 			set_params(GlobalVars.hero_params)
 		"whale":
 			set_params(GlobalVars.whale_params)
+		"coolwhale":
+			set_params(GlobalVars.coolwhale_params)
+
+		
 
 			 # Replace with function body.
 
@@ -92,6 +97,7 @@ func set_params(params):
 	self.max_hp = params[0]
 	self.ex = params[8]
 	self.radius = params[9]
+	self.speed = params[10]
 		
 func get_AC():
 	return self.AC

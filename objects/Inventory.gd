@@ -22,8 +22,9 @@ func find_item(obj: int):
 func generate_items():
 	rng.randomize()
 	var arr =[0,1,1]
-	if GlobalVars.rolled(1,GlobalVars.blueprint_freq) == GlobalVars.blueprint_freq and object.map.current_floor>GlobalVars.min_blueprint_depth:
+	if GlobalVars.rolled(1,GlobalVars.blueprint_freq) == GlobalVars.blueprint_freq and object.map.current_floor>GlobalVars.min_blueprint_depth and len(GlobalVars.unknown_bp)>0 :
 		add_item(len(result)-1)
+		print("BP rolled")
 	else:
 		
 		var id = rng.randi_range(0,2)

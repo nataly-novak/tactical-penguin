@@ -95,7 +95,7 @@ func _on_shop_show(inventory):
 
 		ui.add_child(shp)
 		shp.scale = Vector2(GlobalVars.scale_param, GlobalVars.scale_param)
-		shp.set_position(Vector2(get_viewport_rect().size.x / 2-224*GlobalVars.scale_param,0)) 
+		shp.set_position(Vector2(get_viewport_rect().size.x / 2-280*GlobalVars.scale_param,0)) 
 		shop_on = true
 	else:
 		shp.queue_free()

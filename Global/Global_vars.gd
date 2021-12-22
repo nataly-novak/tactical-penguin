@@ -25,19 +25,26 @@ var bedsidetexb = preload("res://graphics/blueprints/bedside.png")
 var softtexb = preload("res://graphics/blueprints/soft.png")
 var btextures = [chairtexb,tabletexb,curtaintexb,bedtexb,bedsidetexb,softtexb]
 
-var hero_params = [300,12,5,1,6,3,2,19,-1,-1]
-var whale_params = [20,13,2,2,4,1,2,20,1,7]
+var e_types = ["whale","coolwhale"]
+var e_lims = [-2,2]
+var e_i_freq = [50,10]
 
-var food_heal = 20
-var pasta_heal = 60
-var min_walru_depth = -1
-var walrus_freq = 1
+var hero_params = [300,12,5,1,6,3,2,19,-1,-1,0]
+var walrus_params =  [300,12,5,1,6,3,2,19,-1,-1,0]
+var whale_params = [20,13,2,2,4,1,2,20,1,7,1]
+var coolwhale_params = [30,15,2,2,5,2,4,20,3,10,2]
+
+var food_heal = 15
+var pasta_heal = 45
+var min_walru_depth = 1
+var walrus_freq = 3
 var min_blueprint_depth = 3
 var blueprint_freq = 20
 
 var playertex = preload("res://graphics/player/Penguin.png")
 var whaletex = preload("res://graphics/monster/Whale.png")
 var walrustex = preload("res://graphics/kitchen/walrus_token.png")
+var coolwhaletex = preload("res://graphics/monster/coolwhale.png")
 
 var max_enemies = 20
 
@@ -49,7 +56,7 @@ var max_num = 8
 var min_num = 2
 var hall_width = 1
 var max_room_start = 16
-var max_free_items = 7 
+var max_free_items = 5 
 
 
 
@@ -164,11 +171,18 @@ func get_unknowns():
 			
 	
 func learn_bp(x: int):
-	var i = unknown_bp[x]
-	
-	unknown_bp.remove(x)
-	if i in known_bp == false:
-		known_bp.append(i)
+	if len(unknown_bp) > 0:
+		var i = unknown_bp[x]
+		
+		unknown_bp.remove(x)
+		if (i in known_bp) == false:
+			known_bp.append(i)
+		
+			return true
+		else:
+			return false
+	else:
+		return false
 		
 func get_bp():
 	var  l = len(unknown_bp)-1
@@ -177,4 +191,25 @@ func get_bp():
 			
 			
 			
- 
+func get_enemy_params(typ:String):
+	match typ:
+		"hero":
+			return hero_params
+		"walrus":
+			return walrus_params
+		"whale":
+			return whale_params
+		"coolwhale":
+			return coolwhale_params
+			
+			
+func get_enemy_tex(typ:String):
+	match typ:
+		"hero":
+			return playertex
+		"walrus":
+			return walrustex
+		"whale":
+			return whaletex
+		"coolwhale":
+			return coolwhaletex

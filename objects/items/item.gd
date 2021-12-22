@@ -9,6 +9,8 @@ export var o_type = "item"
 onready var map = get_parent()
 export (PackedScene) var Itm
 export var o_number = -1
+export var subtype = "helm"
+export var subparam = 1
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"

@@ -46,6 +46,7 @@ signal zero
 var acting = true
 var lvl = 1
 var cur_exp = 0
+var free_its = ["its"]
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -97,13 +98,13 @@ func set_scene(a: int, b:int, m:int, l: int):
 	
 	if l >=len(survivers):
 		for i in range(0,m):
-			spawn("whale", new_spawn())
+			spawn($enemyspawn.get_enemy(), new_spawn())
 			monsters += 1
 	else:
 		
 		for i in survivers[l]:
-			spawn("whale", i[1])
-			ents[-2].set_hp(i[0])
+			spawn(i[2], i[1])
+			ents[-1].set_hp(i[0])
 			
 	if l>=len(stairs_position):
 		add_stairs(one_stair_pos(hero.get_map_pos()))
@@ -205,7 +206,9 @@ func add_existing_stairs(state):
 
 func drop_item(flavor: String, location: Vector2):
 	var num
-	if iids != [-2]:
+
+		 
+	if iids != [-2] and len(iids)!=0:
 		num = iids.max()+1
 	else:
 		iids.clear()
@@ -219,11 +222,13 @@ func drop_item(flavor: String, location: Vector2):
 	itms.append(itm)
 	add_child(itm)
 	itm.set_map_pos(location)
+	return itm
 	
 func rand_item():
 	var arr =[0,1,1]
-	if GlobalVars.rolled(1,GlobalVars.blueprint_freq) == GlobalVars.blueprint_freq and current_floor>GlobalVars.min_blueprint_depth:
+	if GlobalVars.rolled(1,GlobalVars.blueprint_freq) == GlobalVars.blueprint_freq and current_floor>GlobalVars.min_blueprint_depth and len(GlobalVars.unknown_bp)>0:
 		return (len(hero.inventory.result)-1)
+		print("BP rolled")
 	else:
 		
 		var id = rng.randi_range(0,2)
@@ -236,7 +241,9 @@ func drop_random_items():
 	var n = rng.randi_range(1, GlobalVars.max_free_items)
 	for i in n:
 		var pos = new_spawn()
-		drop_item(i_types[rand_item()],pos)
+		
+		
+		drop_item(i_types[rand_item()],pos)	 
 		
 		
 	
@@ -358,7 +365,13 @@ func pick(loc:Vector2):
 			emit_signal("hp_change",health)
 		elif flav == "blueprint":
 			var x = GlobalVars.get_bp()
-			GlobalVars.learn_bp(x)
+			var chk = GlobalVars.learn_bp(x)
+			if chk:
+				type("You have learnt how to make "+GlobalVars.ff_types[x])
+			else:
+				type("Something was wrong with this blueprint")
+				
+			
 		
 
 func _input(event):
@@ -422,8 +435,8 @@ func _input(event):
 				if DOWN:
 					shop.go_down()
 				if ENTER:
-					if shop.buy(shop.blueprints[shop.selected]):
-						shop.tail.drop_item(shop.blueprints[shop.selected], shop.tail.furns)
+					if shop.buy(shop.blueprints[shop.known_bp[shop.selected]]):
+						shop.tail.drop_item(shop.blueprints[shop.known_bp[shop.selected]], shop.tail.furns)
 				if CHECK:
 					shop.purchase()
 		if event is InputEventMouseButton:
@@ -431,9 +444,7 @@ func _input(event):
 				if help_on ==true:
 					emit_signal("show_help")
 					help_on = false
-				if main.shop_on ==true:
-					toggle_shop()
-					main.shop_on = false
+				
 
 func toggle_inventory():
 	self.emit_signal("show_inventory", hero.inventory.items)
@@ -448,7 +459,8 @@ func new_floor(a,b,m,l1,l2):
 		if i.o_friendly == "foe":
 			var pos = i.get_map_pos()
 			var hp = i.fighter.get_hp()
-			var state = [hp, pos]
+			var typ = i.o_type
+			var state = [hp, pos, typ]
 
 			mon_surv.append(state)
 	if len(survivers)<=l1:		
@@ -468,6 +480,17 @@ func new_floor(a,b,m,l1,l2):
 			j.queue_free()
 			ids.pop_back()
 			ents.pop_back()
+	
+	while len(itms)>0:
+		var j = itms[-1]
+		if j is String == false:
+			j.queue_free()
+			itms.pop_back()
+			iids.pop_back()
+		else:
+			itms.clear()
+			iids.clear()
+		
 	var strs_fl = []
 	
 	for i in range(1,3): 
@@ -492,7 +515,7 @@ func new_floor(a,b,m,l1,l2):
 	emit_signal("lvl_change",current_floor)
 
 func type(line:String):
-	logger.text = logger.text+line+"\n"
+	logger.text = logger.text+line+"\n"+"---------"+"\n"
 
 func _on_control_pressed(KEY):
 	var UP = KEY == "UP"
@@ -543,19 +566,19 @@ func _on_control_pressed(KEY):
 		if SHP:	
 			toggle_shop()
 	else:	
-			if SHP:	
-					toggle_shop()
-			if main.shop_on:
-				var shop = main.shp
-				if UP:
-					shop.go_up()
-				if DOWN:
-					shop.go_down()
-				if ENTER:
-					if shop.buy(shop.blueprints[shop.selected]):
-						shop.tail.drop_item(shop.blueprints[shop.selected], shop.tail.furns)
-				if CHECK:
-					shop.purchase()
+		if SHP:	
+			toggle_shop()
+		if main.shop_on:
+			var shop = main.shp
+			if UP:
+				shop.go_up()
+			if DOWN:
+				shop.go_down()
+			if ENTER:
+				if shop.buy(shop.blueprints[shop.known_bp[shop.selected]]):
+					shop.tail.drop_item(shop.blueprints[shop.known_bp[shop.selected]], shop.tail.furns)
+			if CHECK:
+				shop.purchase()
 
 func rescale():
 	self.scale = Vector2(GlobalVars.scale_param,GlobalVars.scale_param)
@@ -576,11 +599,12 @@ func check_lvl():
 		type(("You leveled up! Max HP: "+str(hero.fighter.max_hp)+", your AC: "+ str(hero.fighter.AC)+", your attack: "+ str(hero.fighter.BAB)))
 		
 func _on_walrus():
-	type("You encounter walrus")
-	print("Walrus")
+	type("You encounter the walrus")
+
 	if walrus.has_food:
 		emit_signal("show_walrus")
-		print("Walrus")
+		type("He has some food for you.") 
+		
 	else:
 		type("He currently has no food for you.") 
 		
