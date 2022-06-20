@@ -6,11 +6,13 @@ onready var controls = ui.get_node("controls")
 onready var map = self.get_node("TileMap")
 export (PackedScene) var Inv 
 export (PackedScene) var Shp
+export (PackedScene) var Csh
 export (PackedScene) var Hlp
 export (PackedScene) var Zro
 export (PackedScene) var Wlr
 var inventory_on = false
 var shop_on = false
+var charsheet_on = false
 var help_on = false
 var walrus_on = false
 var inv
@@ -18,6 +20,7 @@ var shp
 var hlp
 var zro
 var wlr
+var csh
 signal show_help
 var turn_counter = 0
 signal controls_pressed
@@ -85,6 +88,19 @@ func _on_inventory_show(inventory):
 	else:
 		inv.queue_free()
 		inventory_on = false
+		
+func _on_charsheet_show(hero):
+
+	if  charsheet_on == false:
+		csh = Csh.instance()
+		ui.add_child(csh)
+		csh.scale = Vector2(GlobalVars.scale_param, GlobalVars.scale_param)
+		csh.set_position(get_viewport_rect().size / 2) 
+		charsheet_on = true
+	else:
+		csh.update_char()
+		csh.queue_free()
+		charsheet_on = false
 		
 				
 func _on_shop_show(inventory):

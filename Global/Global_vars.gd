@@ -68,6 +68,7 @@ var sticktex = preload("res://graphics/items/Stick.png")
 var clothtex = preload("res://graphics/items/cloth.png")
 var foodtex = preload("res://graphics/items/food.png")
 var blueprinttex = preload("res://graphics/items/blueprint.png")
+
 var itemtex = [sticktex, placktex, clothtex, foodtex, blueprinttex]# Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -94,6 +95,36 @@ var label_font_size = 40
 
 var unknown_bp = [2]
 
+var w_01 = preload("res://graphics/equipment/weapon/w_01.PNG")
+var w_02 = preload("res://graphics/equipment/weapon/w_02.png")
+var weapons = [[],[w_01, "d", 1], [w_02, "c", 3]]
+var weapons_a = [[],[w_01, "d", 1], [w_02, "c", 3]]
+
+var h_01 = preload("res://graphics/equipment/head/h_01.PNG")
+var h_02 = preload("res://graphics/equipment/head/h_02.png")
+var heads = [[],[h_01, "e", 1], [h_02, "e", 2]]
+var heads_a = [[],[h_01, "e", 1], [h_02, "e", 2]]
+
+var b_01 = preload("res://graphics/equipment/body/b_01.PNG")
+var b_02 = preload("res://graphics/equipment/body/b_02.png")
+var body = [[],[b_01, "e", 2], [b_02, "e", 4]]
+var body_a = [[],[b_01, "e", 2], [b_02, "e", 4]]
+
+var booster =[[]]
+var booster_a =[[]]
+
+var feet = [[]]
+var feet_a = [[]]
+
+var rander = [[]]
+var rander_a = [[]]
+
+var equipment = [weapons, heads, body, booster, feet, rander]
+var equipment_a = [weapons_a, heads_a, body_a, booster_a, feet_a, rander_a]
+var equiped =[1,0,0,0,0,0]
+var displayed=[1,1,1,0,0,0]
+var bonuses = [0,0,2,0,0,0]
+var def_bonuses = [0,0,2,0,0,0]
 
 #var saved_room = [["chair", Vector2(300,300)]]
 # Called when the node enters the scene tree for the first time.
@@ -213,3 +244,54 @@ func get_enemy_tex(typ:String):
 			return whaletex
 		"coolwhale":
 			return coolwhaletex
+
+func get_line(chr:String, vl:int):
+	var line = str(vl)+" "
+	match chr:
+		"d":
+			line ="+ "+line+ "to damage"
+		"a":
+			line ="+ "+line+ "to attack"
+		"c":
+			line = "x"+line+"critical"
+		"s":
+			line = "+ "+line+ "stealth"
+		"e":
+			line = "+ "+line + "to defense"
+		"h":
+			line = "+ "+line + "max HP"
+		_:
+			line = ""
+	return line
+
+func set_bonuses():
+	for i in len(bonuses):
+		bonuses[i]=def_bonuses[i]
+
+	for i in len(equipment_a):
+		var chr =""
+		var val =0
+		print(i, equipment_a[i])
+		if equipment_a[i][equiped[i]]:
+			chr = equipment_a[i][equiped[i]][1]
+			val = equipment_a[i][equiped[i]][2]
+			print(chr, val)
+		match chr:
+			"a":
+				bonuses[0]+=val;
+			"d":
+				bonuses[1]+=val;
+			"c":
+				if bonuses[2]<val:
+					bonuses[2] = val
+			"e":
+				bonuses[3]+=val
+			"h":
+				bonuses[4]+=val
+			"s":
+				bonuses[5]+=val
+	print(bonuses)
+
+func get_bonuses():
+	print(bonuses)
+	return bonuses

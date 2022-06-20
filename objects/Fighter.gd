@@ -13,6 +13,7 @@ onready var max_hp = 300
 onready var ex = 1
 onready var radius = 7 
 onready var speed = 1
+onready var stealth = 0
 onready var map = character.get_parent()
 
 # Declare member variables here. Examples:
@@ -84,6 +85,23 @@ func get_damage (damage):
 		return 0
 	else:
 		return 1
+		
+func add_bonuses(params):
+	self.BAB += params[0]
+	self.dbonus += params[1]
+	self.crit_mult = params[2]
+	self.AC+=params[3]
+	self.max_hp+=params[4]
+	self.stealth+=params[5]
+
+func remove_bonuses(params):
+	self.BAB -= params[0]
+	self.dbonus -= params[1]
+	self.crit_mult = 2
+	self.AC-=params[3]
+	self.max_hp-=params[4]
+	self.stealth-=params[5]
+	
 		
 func set_params(params):
 	self.hp = params[0]

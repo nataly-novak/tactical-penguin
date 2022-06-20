@@ -15,6 +15,7 @@ var save_on = false
 var load_on = false
 
 var s =1
+
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -98,3 +99,5 @@ func resize():
 			GlobalVars.scale_param = self.get_viewport_rect().size.x/1500	
 	else:
 		GlobalVars.scale_param = 1
+
+

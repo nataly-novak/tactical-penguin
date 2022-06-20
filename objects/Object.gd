@@ -17,6 +17,8 @@ onready var aStar = map.pathfinder.aStar
 signal hit (attacker, damager)
 signal walrus
 export var has_food = false
+export (PackedScene) var Png
+var png
 
 # Declare member variables here. Examples:
 # var a = 2
@@ -42,7 +44,9 @@ func _ready():
 	var bottom_limit = h-64
 	if o_type == "hero":
 		camera.current = true
-		
+		objectsprite.hide()
+		png = Png.instance()
+		self.add_child(png)
 		resize()
 		fighter.set_params(GlobalVars.hero_params)
 		get_node("Light2D2").enabled = true

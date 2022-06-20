@@ -73,6 +73,9 @@ func _on_Shop_pressed():
 
 func _on_Items_pressed():
 	emit_signal("control_presed","INV")# Replace with function body.
+	
+func _on_Sheet_pressed():
+	emit_signal("control_presed","CSH")# Replace with function body.
 
 func resize():
 	rescale()
@@ -81,3 +84,7 @@ func rescale():
 	self.scale = Vector2(GlobalVars.scale_param,GlobalVars.scale_param)
 	self.position.x = get_viewport_rect().size.x-(self.get_node("Right").position.x-self.get_node("Left").position.x)/2*scale_param -128*scale_param
 	self.position.y = get_viewport_rect().size.y-(self.get_node("Down").position.y-self.get_node("Done").position.y)/2*GlobalVars.scale_param -80*GlobalVars.scale_param
+
+
+
+

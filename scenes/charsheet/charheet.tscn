@@ -1,0 +1,203 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://Fonts/Font_res.tres" type="DynamicFont" id=1]
+[ext_resource path="res://graphics/UI/Charsheet/Group 1/Penguin.PNG" type="Texture" id=2]
+[ext_resource path="res://graphics/UI/Charsheet/Background.PNG" type="Texture" id=3]
+[ext_resource path="res://graphics/equipment/head/h_01.PNG" type="Texture" id=4]
+[ext_resource path="res://graphics/equipment/body/b_01.PNG" type="Texture" id=5]
+[ext_resource path="res://graphics/equipment/weapon/w_01.PNG" type="Texture" id=6]
+[ext_resource path="res://graphics/UI/Charsheet/Fields.PNG" type="Texture" id=7]
+[ext_resource path="res://graphics/UI/Charsheet/Selection.PNG" type="Texture" id=8]
+[ext_resource path="res://scenes/charsheet/Selector.tscn" type="PackedScene" id=9]
+[ext_resource path="res://scenes/charsheet/charheet.gd" type="Script" id=10]
+
+[node name="Sheet" type="Node2D"]
+script = ExtResource( 10 )
+
+[node name="BG" type="Sprite" parent="."]
+position = Vector2( 0, -1.68176 )
+texture = ExtResource( 3 )
+
+[node name="Field" type="Sprite" parent="."]
+position = Vector2( 220, 0 )
+texture = ExtResource( 7 )
+
+[node name="Labels" type="Node2D" parent="Field"]
+
+[node name="W_Bonus" type="Label" parent="Field/Labels"]
+margin_left = -218.818
+margin_top = -312.364
+margin_right = -55.8179
+margin_bottom = -203.364
+custom_fonts/font = ExtResource( 1 )
+text = "0 to damage"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="H_Bonus" type="Label" parent="Field/Labels"]
+margin_left = 220.184
+margin_top = -312.364
+margin_right = 383.184
+margin_bottom = -203.364
+custom_fonts/font = ExtResource( 1 )
+text = "0 to defense"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="B_Bonus" type="Label" parent="Field/Labels"]
+margin_left = -218.818
+margin_top = -36.3636
+margin_right = -55.8179
+margin_bottom = 72.6364
+custom_fonts/font = ExtResource( 1 )
+text = "0 to defense"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="O_Bonus" type="Label" parent="Field/Labels"]
+margin_left = 220.184
+margin_top = -34.364
+margin_right = 383.184
+margin_bottom = 74.636
+custom_fonts/font = ExtResource( 1 )
+text = "0 to defense"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="F_Bonus" type="Label" parent="Field/Labels"]
+margin_left = -218.818
+margin_top = 244.636
+margin_right = -55.8179
+margin_bottom = 353.636
+custom_fonts/font = ExtResource( 1 )
+text = "0 to stealth"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="R_Bonus" type="Label" parent="Field/Labels"]
+margin_left = 220.184
+margin_top = 244.636
+margin_right = 383.184
+margin_bottom = 353.636
+custom_fonts/font = ExtResource( 1 )
+text = "0 to attack"
+align = 1
+valign = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Pictures" type="Node2D" parent="Field"]
+
+[node name="W_Pic" type="Sprite" parent="Field/Pictures"]
+position = Vector2( -303.563, -260.385 )
+scale = Vector2( 0.558174, 0.558174 )
+texture = ExtResource( 6 )
+
+[node name="H_Pic" type="Sprite" parent="Field/Pictures"]
+position = Vector2( 137.907, -258.188 )
+scale = Vector2( 0.647485, 0.647485 )
+texture = ExtResource( 4 )
+
+[node name="B_Pic" type="Sprite" parent="Field/Pictures"]
+position = Vector2( -303.563, 20.2861 )
+scale = Vector2( 0.456137, 0.456137 )
+texture = ExtResource( 5 )
+
+[node name="O_Pic" type="Sprite" parent="Field/Pictures"]
+
+[node name="F_Pic" type="Sprite" parent="Field/Pictures"]
+
+[node name="R_Pic" type="Sprite" parent="Field/Pictures"]
+
+[node name="Penguin" type="Node2D" parent="."]
+
+[node name="Body" type="Sprite" parent="Penguin"]
+position = Vector2( -480.992, -5.04541 )
+texture = ExtResource( 2 )
+
+[node name="Pan" type="Sprite" parent="Penguin"]
+position = Vector2( -503, -210 )
+texture = ExtResource( 4 )
+centered = false
+offset = Vector2( -70, -75 )
+
+[node name="Weapon" type="Sprite" parent="Penguin"]
+position = Vector2( -307.768, 28.5905 )
+texture = ExtResource( 6 )
+
+[node name="Pillow" type="Sprite" parent="Penguin"]
+position = Vector2( -428.857, 31.954 )
+texture = ExtResource( 5 )
+
+[node name="Back" type="Button" parent="."]
+margin_left = 89.135
+margin_top = 373.358
+margin_right = 160.135
+margin_bottom = 438.358
+rect_pivot_offset = Vector2( 35.5, 32.5 )
+custom_fonts/font = ExtResource( 1 )
+text = "<"
+
+[node name="Save" type="Button" parent="."]
+margin_left = -710.0
+margin_top = -461.0
+margin_right = -639.0
+margin_bottom = -396.0
+rect_pivot_offset = Vector2( 35.5, 32.5 )
+custom_fonts/font = ExtResource( 1 )
+text = "X"
+
+[node name="Next" type="Button" parent="."]
+margin_left = 280.135
+margin_top = 373.358
+margin_right = 351.135
+margin_bottom = 438.358
+rect_pivot_offset = Vector2( 35.5, 32.5 )
+custom_fonts/font = ExtResource( 1 )
+text = ">"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Selection_1" type="Sprite" parent="."]
+position = Vector2( 0, -321.222 )
+texture = ExtResource( 8 )
+
+[node name="Selection_2" type="Sprite" parent="."]
+visible = false
+position = Vector2( 441, -320 )
+texture = ExtResource( 8 )
+
+[node name="Selection_3" type="Sprite" parent="."]
+visible = false
+position = Vector2( 0, -44 )
+texture = ExtResource( 8 )
+
+[node name="Selection_4" type="Sprite" parent="."]
+visible = false
+position = Vector2( 441, -44 )
+texture = ExtResource( 8 )
+
+[node name="Selection_5" type="Sprite" parent="."]
+visible = false
+position = Vector2( 0, 240 )
+texture = ExtResource( 8 )
+
+[node name="Selection_6" type="Sprite" parent="."]
+visible = false
+position = Vector2( 440, 240 )
+texture = ExtResource( 8 )
+
+[node name="selector" parent="." instance=ExtResource( 9 )]
+visible = false
+
+[connection signal="pressed" from="Back" to="." method="_on_Back_pressed"]
+[connection signal="pressed" from="Save" to="." method="_on_Save_pressed"]
+[connection signal="pressed" from="Next" to="." method="_on_Next_pressed"]

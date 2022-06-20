@@ -40,6 +40,7 @@ var current_floor = 0
 signal show_inventory
 signal show_shop
 signal show_walrus
+signal show_charsheet
 var help_on = true
 var regen_rate = 10
 signal zero
@@ -47,6 +48,7 @@ var acting = true
 var lvl = 1
 var cur_exp = 0
 var free_its = ["its"]
+var ex_bonuses = [0,0,2,0,0]
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -61,6 +63,7 @@ func _ready():
 	self.connect("show_inventory", main, "_on_inventory_show")
 	self.connect("show_shop", main, "_on_shop_show")
 	self.connect("show_help", main, "_on_help_show")
+	self.connect("show_charsheet", main, "_on_charsheet_show")
 	self.connect("hp_change",self.get_parent(),"_on_hp_change")
 	self.connect("lvl_change",self.get_parent(),"_on_level_change")
 	self.connect("turn_change",self.get_parent(),"_on_turn_change")
@@ -87,6 +90,9 @@ func set_scene(a: int, b:int, m:int, l: int):
 	if not hero:
 
 		hero = spawn("hero", hero_position)
+		GlobalVars.set_bonuses()
+		var new_bonuses = GlobalVars.get_bonuses()
+		hero.fighter.add_bonuses(new_bonuses)
 	else:
 		hero.set_map_pos(hero_position)
 		used_cells.erase(hero_position)
@@ -375,7 +381,7 @@ func pick(loc:Vector2):
 		
 
 func _input(event):
-		if main.shop_on == false and acting:
+		if main.shop_on == false and main.charsheet_on==false and acting:
 			if event is InputEventKey and event.pressed:
 				var UP = (event.scancode == KEY_K or event.scancode ==KEY_UP)
 				var DOWN = (event.scancode == KEY_J or event.scancode == KEY_DOWN)
@@ -421,8 +427,11 @@ func _input(event):
 					emit_signal("hp_change",health)
 		if event is InputEventKey and event.pressed:
 			var SHP = event.scancode == KEY_S
+			var CSH = event.scancode == KEY_C
 			if SHP:	
 					toggle_shop()
+			if CSH:
+				toggle_charsheet()
 			if main.shop_on:
 				var shop = main.shp
 				
@@ -439,6 +448,25 @@ func _input(event):
 						shop.tail.drop_item(shop.blueprints[shop.known_bp[shop.selected]], shop.tail.furns)
 				if CHECK:
 					shop.purchase()
+			if main.charsheet_on:
+				var LEFT = (event.scancode == KEY_H or event.scancode == KEY_LEFT)
+				var RIGHT = (event.scancode == KEY_L or event.scancode == KEY_RIGHT)
+				var PICK = event.scancode == KEY_P
+				var sheet = main.csh
+				if sheet.selector_on == false:
+					if RIGHT:
+						sheet.go_next()
+					if LEFT:
+						sheet.go_back()
+					if PICK:
+						sheet.toggle_selector()
+				else:
+					if RIGHT:
+						sheet.item_next()
+					if LEFT:
+						sheet.item_back()
+					if PICK:
+						sheet.toggle_pic()	
 		if event is InputEventMouseButton:
 			if event.button_index == BUTTON_LEFT and event.pressed: 
 				if help_on ==true:
@@ -451,6 +479,10 @@ func toggle_inventory():
 	
 func toggle_shop():
 	self.emit_signal("show_shop", hero.inventory.items)
+	
+func toggle_charsheet():
+	self.emit_signal("show_charsheet", hero)
+	ex_bonuses=GlobalVars.get_bonuses()
 
 func new_floor(a,b,m,l1,l2):
 
@@ -528,9 +560,10 @@ func _on_control_pressed(KEY):
 	var NEW = KEY == "NEXT"
 	var BCK = KEY == "BACK"
 	var ENTER = KEY == "PICK"
+	var CSH = KEY=="CSH"
 	
 	var CHECK = KEY == "DONE"
-	if main.shop_on == false and acting:
+	if main.shop_on == false and main.charsheet_on==false and acting:
 		if UP:
 			hero.step(Vector2(0,-1))
 			
@@ -568,6 +601,8 @@ func _on_control_pressed(KEY):
 	else:	
 		if SHP:	
 			toggle_shop()
+		if CSH:
+			toggle_charsheet()
 		if main.shop_on:
 			var shop = main.shp
 			if UP:
@@ -579,6 +614,22 @@ func _on_control_pressed(KEY):
 					shop.tail.drop_item(shop.blueprints[shop.known_bp[shop.selected]], shop.tail.furns)
 			if CHECK:
 				shop.purchase()
+		if main.charsheet_on:
+			var sheet = main.csh
+			if sheet.selector_on == false:
+					if RIGHT:
+						sheet.go_next()
+					if LEFT:
+						sheet.go_back()
+					if PICK:
+						sheet.toggle_selector()
+			else:
+					if RIGHT:
+						sheet.item_next()
+					if LEFT:
+						sheet.item_back()
+					if PICK:
+						sheet.toggle_pic()	
 
 func rescale():
 	self.scale = Vector2(GlobalVars.scale_param,GlobalVars.scale_param)
@@ -614,3 +665,11 @@ func _on_food_eaten():
 	var health = hero.fighter.hp
 	emit_signal("hp_change",health)
 	walrus.has_food = false
+
+func _on_equip_updated():
+	hero.fighter.remove_bonuses(ex_bonuses)
+	hero.png.set_appearence()
+	GlobalVars.set_bonuses()
+	var new_bonuses = GlobalVars.get_bonuses()
+	hero.fighter.add_bonuses(new_bonuses)
+	type(("Upgrade! Max HP: "+str(hero.fighter.max_hp)+", your AC: "+ str(hero.fighter.AC)+", your attack: "+ str(hero.fighter.BAB) +", your damage bonus: "+ str(hero.fighter.dbonus) +", your crit multiplier: x"+ str(hero.fighter.crit_mult) +", your stealth bonus: "+ str(hero.fighter.stealth)))

@@ -111,7 +111,7 @@ margin_bottom = 53.0
 custom_fonts/font = SubResource( 1 )
 text = "Done"
 __meta__ = {
-"_edit_use_anchors_": false
+"_edit_use_anchors_": true
 }
 
 [node name="Back" type="TouchScreenButton" parent="."]
@@ -182,6 +182,23 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Sheet" type="TouchScreenButton" parent="."]
+position = Vector2( -32, -184 )
+normal = ExtResource( 3 )
+pressed = ExtResource( 1 )
+visibility_mode = 1
+
+[node name="Label" type="Label" parent="Sheet"]
+margin_left = 8.0
+margin_top = 20.0
+margin_right = 80.0
+margin_bottom = 53.0
+custom_fonts/font = SubResource( 1 )
+text = "Hero"
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
 [connection signal="pressed" from="Pick" to="." method="_on_Pick_pressed"]
 [connection signal="pressed" from="Up" to="." method="_on_Up_pressed"]
 [connection signal="pressed" from="Down" to="." method="_on_Down_pressed"]
@@ -192,3 +209,4 @@ __meta__ = {
 [connection signal="pressed" from="Next" to="." method="_on_Next_pressed"]
 [connection signal="pressed" from="Shop" to="." method="_on_Shop_pressed"]
 [connection signal="pressed" from="Items" to="." method="_on_Items_pressed"]
+[connection signal="pressed" from="Sheet" to="." method="_on_Sheet_pressed"]

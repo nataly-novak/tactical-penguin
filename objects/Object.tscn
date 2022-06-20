@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://objects/Object.gd" type="Script" id=1]
 [ext_resource path="res://graphics/player/Penguin.png" type="Texture" id=2]
@@ -6,10 +6,12 @@
 [ext_resource path="res://graphics/player/light2.png" type="Texture" id=4]
 [ext_resource path="res://objects/Fighter.gd" type="Script" id=5]
 [ext_resource path="res://objects/Inventory.gd" type="Script" id=6]
+[ext_resource path="res://objects/player/Penguin.tscn" type="PackedScene" id=7]
 
 [node name="Object" type="Node2D"]
 z_index = 1
 script = ExtResource( 1 )
+Png = ExtResource( 7 )
 
 [node name="Sprite" type="Sprite" parent="."]
 scale = Vector2( 0.5, 0.5 )
